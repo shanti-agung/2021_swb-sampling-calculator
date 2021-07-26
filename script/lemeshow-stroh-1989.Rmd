@@ -1,0 +1,50 @@
+---
+title: "Lemeshow and Stroh (Survey Methodology, 1989)"
+subtitle: "Quality Assurance Sampling for Evaluating Health Parameters in Developing Countries"
+author: "Shanti Agung"
+date: "7/26/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## QAS Method
+
+The null hypothesis, illustrated at the 50% level, is:
+
+$$
+H_0: P \ge P_0 \quad (i.e., \text{proportion of unvaccinated children} \ge 0.50)
+$$
+versus
+$$
+H_0: P < P_0 \quad (i.e., \text{proportion of unvaccinated children} < 0.50)
+$$
+
+Suppose *n* = 7, *p* = 0.7, and thus $D \sim {\sf Binom} (7,0.7)$.
+
+If we decide to use $d^* = 1$, then $\alpha$ (false negative, type I error, accepting lot when it is defective, reject $H_0$ when the proportion of unvaccinated children is actually $\ge$ 0.5) is
+
+$$
+\mathrm{Pr}(d \le d^*) = \mathrm{Pr}(d \le 1) = \mathrm{Pr}(d=0) + \mathrm{Pr}(d=1) = \binom{7}{0}0.5^0(1-0.5)^{(7-0)} + \binom{7}{1}0.5^1(1-0.5)^{(7-1)}
+$$
+
+```{r}
+type_1_error <- pbinom(1, size = 7, prob = 0.5)
+type_1_error
+```
+
+If the proportion of unvaccinated children is 7-%, the power of the test ($1-\beta$, accepting the lot when it is indeed not defective, correctly reject $H_0$) is 
+
+```{r}
+power_of_test <- pbinom(1, size = 7, prob = 0.7) 
+power_of_test
+```
+
+With $n=7$, $d^* = 0$, and $P_0 = 0.5$, $\alpha$ would equal to:
+```{r}
+type_1_error <- pbinom(0, size = 7, prob = 0.5) 
+type_1_error
+```
+
