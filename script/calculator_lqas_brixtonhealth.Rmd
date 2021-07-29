@@ -65,9 +65,13 @@ beta <- 0.1
 
 ### Reference: Lemeshow and Stroh (1989)
 
+Using the above specifications, the decision rule that the *brixtonhealth* calculator calculated is 33, actual $\alpha$ error is 0.0110, and actual $\beta$ error is 0.0057.
+
+Calculating $\alpha$ and $\beta$ given decision rule, $d^*$ = 33 are:
+
 ```{r}
 type1_error_hyper <- phyper(q=33, m = N*p_0, n = (N-N*p_0), k = n)
-type1_1error_hyper
+type1_error_hyper
 ```
 
 ```{r}
