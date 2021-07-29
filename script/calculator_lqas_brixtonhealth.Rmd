@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Source file/ link: [Brixton Health's sampling plan calculator](http://www.brixtonhealth.com/hyperLQAS.findD.html)
 
-## The sampling design
+## A. The sampling design
 
 1. Sampling assumptions: simple random sampling without replacement.
 
@@ -39,7 +39,7 @@ Source file/ link: [Brixton Health's sampling plan calculator](http://www.brixto
 * Comparative surveys
 
 
-## Checking the calculator calculation
+## B. Checking the calculator calculation
 
 *Specifications:*
 The calculator uses the following default specifications: 
@@ -74,7 +74,6 @@ p_0 <- 0.8
 p_a <- 0.5
 alpha <- 0.1
 beta <- 0.1
-
 
 # calculate mean
 mean_d <- n*p_0
@@ -116,4 +115,30 @@ d_star <- n_calc*p_0 - (z_0 * sqrt(n_calc*p_0*(1-p_0)))
 paste0("n: ", n_calc)
 paste0("d_star: ", ceiling(d_star))
 ```
+
+### Reference: Lemeshow and Stroh (1989)
+
+
+```{r}
+type_1err_hyper <- phyper(q=33, m = N*p_0, n = (N-N*p_0), k = n)
+type_1err_hyper
+```
+```{r}
+d0 <- dhyper(x=0, m = N*p_0, n = (N-N*p_0), k = n)
+d0
+```
+```{r}
+d1 <- dhyper(x=1, m = N*p_0, n = (N-N*p_0), k = n)
+d1
+```
+
+```{r}
+d0 + d1
+```
+
+```{r}
+phyper(q=1, m = N*p_0, n = (N-N*p_0), k = n)
+```
+
+
 
