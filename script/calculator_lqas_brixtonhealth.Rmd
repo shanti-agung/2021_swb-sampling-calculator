@@ -72,6 +72,9 @@ N <- 600
 n <- 50
 p_0 <- 0.8
 p_a <- 0.5
+alpha <- 0.1
+beta <- 0.1
+
 
 # calculate mean
 mean_d <- n*p_0
@@ -98,23 +101,10 @@ $$
 
 
 ```{r}
-#specifications
-alpha <- 0.1
 z_0 <- qnorm(alpha, lower.tail = FALSE)
-beta <- 0.1
 z_a <- qnorm(beta, lower.tail = FALSE)
-
-# calculate d*
-d_star_0 <- mean_d - (z_0 * sqrt(var_d))
-d_star_a <- n*p_a - (z_a * sqrt(n*p_a*(1-p_a)*(N-n)/(N-1)))
-
-paste0("z: ", round(z,3))
-paste("d_star_0: ", ceiling(d_star_0))
-paste("d_star_a: ", ceiling(d_star_a))
-
-```
-
-```{r}
+paste0("z_0: ", round(z_0,3))
+paste0("z_a: ", round(z_a,3))
 
 # calculate n that makes the two d* equations equals
 numer <- z_0*sqrt(p_0*(1-p_0)) + z_a*sqrt(p_a*(1-p_a))
