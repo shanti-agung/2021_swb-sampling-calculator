@@ -1,0 +1,82 @@
+---
+title: "Lemeshow and Taber (World Health Stat Qtr, 1991)"
+subtitle: "Lot Quality Assurance Sampling: Single and Double Sampling Plans"
+author: "Shanti Agung"
+date: "7/29/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Hypergeometric distribution is represented by the following formula :
+$$
+\mathrm{P}(d \le d^*) = \sum_{d=0}^{d^*} \frac{\binom{NP_0}{d} \binom{N(1-P_0)}{n-d}}{\binom{N}{n}}
+$$
+The mean and variance of hypergeometric distribution with sample size $n$ and the hypothesized proportion $P_0$ are:
+
+$$
+\mathrm{mean}(d) = nP_0
+$$
+and
+$$
+\mathrm{var}(d) = nP_0(1-P_0)\left( \frac{N-n}{N-1} \right)
+$$
+
+
+## Single sampling example when p_0, p_a, and beta are specified
+
+```{r}
+# specifications
+p_0 <- 0.2
+p_a <- 0.1
+
+```
+
+$d$ would be calculated as:
+$$
+d^* = nP_0 - z_{1-\alpha} \sqrt{nP_0(1-P_0)\left( \frac{N-n}{N-1}\right)}  
+$$
+Because $P_a$ and $\beta$ are also specified , 
+
+$$
+d^* = nP_0 - z_{1-\beta} \sqrt{nP_a(1-P_a)\left( \frac{N-n}{N-1}\right)}  
+$$
+
+Setting the above two equations for $d$ equal to each other, and solving for $n$:
+$$
+n = \left(\frac{z_{1-\alpha} \sqrt{P_0(1-P_0)} + z_{1-\beta} \sqrt{P_a(1-P_a)}}{(P_0 - P_a)}  \right)^2
+$$
+
+
+```{r}
+#specifications
+alpha <- 0.05
+z_0 <- qnorm(alpha, lower.tail = FALSE)
+beta <- 0.2
+z_a <- qnorm(beta, lower.tail = FALSE)
+
+# calculate d*
+d_star_0 <- mean_d - (z_0 * sqrt(var_d))
+d_star_a <- n*p_a - (z_a * sqrt(n*p_a*(1-p_a)*(N-n)/(N-1)))
+
+paste0("z: ", round(z_0,3))
+paste("d_star_0: ", ceiling(d_star_0))
+paste("d_star_a: ", ceiling(d_star_a))
+
+```
+
+```{r}
+
+# calculate n that makes the two d* equations equals
+numer <- z_0*sqrt(p_0*(1-p_0)) + z_a*sqrt(p_a*(1-p_a))
+denom <- p_0 - p_a
+
+n_calc <- ceiling((numer / denom)^2)
+d_star <- n_calc*p_0 - (z_0 * sqrt(n_calc*p_0*(1-p_0)))
+
+paste0("n: ", n_calc)
+paste0("d_star: ", ceiling(d_star))
+```
+The calculated sample size, $n$ and critical number, $d^*$ are identical to those calculated in Lemeshow and Taber (1991) paper.
