@@ -50,6 +50,33 @@ The calculator uses the following default specifications:
 * Maximum tolerable $\lapha$ error = 0.1
 * Maximum tolerable $\beta$ error = 0.1
 
+
+```{r}
+# specifications
+N <- 600      # population size
+n <- 50       # sample size
+p_0 <- 0.8    # upper threshold
+p_a <- 0.5    # lower threshold
+alpha <- 0.1
+beta <- 0.1
+
+```
+
+
+### Reference: Lemeshow and Stroh (1989)
+
+```{r}
+type1_error_hyper <- phyper(q=33, m = N*p_0, n = (N-N*p_0), k = n)
+type1_1error_hyper
+```
+
+```{r}
+power_of_test <- phyper(q=33, m = N*p_a, n = (N-N*p_a), k = n)
+type2_error_hyper <- 1 - power_of_test
+type2_error_hyper
+```
+
+
 ### Reference: Lemeshow & Taber (1991)
 
 Hypergeometric distribution is represented by the following formula [@lemeshowtaber1991]:
@@ -65,23 +92,6 @@ and
 $$
 \mathrm{var}(d) = nP_0(1-P_0)\left( \frac{N-n}{N-1} \right)
 $$
-Given our specifications:
-```{r}
-# specifications
-N <- 600
-n <- 50
-p_0 <- 0.8
-p_a <- 0.5
-alpha <- 0.1
-beta <- 0.1
-
-# calculate mean
-mean_d <- n*p_0
-var_d <- n*p_0*(1-p_0)*(N-n)/(N-1)
-
-paste0("mean: ", mean_d)
-paste0("variance: ", round(var_d,3))
-```
 
 If the calculator uses normal approximation to the hypergeometric distribution, then $d$ would be calculated as:
 $$
@@ -116,29 +126,7 @@ paste0("n: ", n_calc)
 paste0("d_star: ", ceiling(d_star))
 ```
 
-### Reference: Lemeshow and Stroh (1989)
 
-
-```{r}
-type_1err_hyper <- phyper(q=33, m = N*p_0, n = (N-N*p_0), k = n)
-type_1err_hyper
-```
-```{r}
-d0 <- dhyper(x=0, m = N*p_0, n = (N-N*p_0), k = n)
-d0
-```
-```{r}
-d1 <- dhyper(x=1, m = N*p_0, n = (N-N*p_0), k = n)
-d1
-```
-
-```{r}
-d0 + d1
-```
-
-```{r}
-phyper(q=1, m = N*p_0, n = (N-N*p_0), k = n)
-```
 
 
 
