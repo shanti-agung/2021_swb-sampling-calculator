@@ -1,18 +1,16 @@
 ---
 title: "Review of LQAS Sampling Plan Calculator"
-subtitle: "Brixton Health"
 author: "Team 2"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: pdf_document
-bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Source file/ link: [Brixton Health's sampling plan calculator](http://www.brixtonhealth.com/hyperLQAS.findD.html)
+Source link: [Brixton Health's sampling plan calculator](http://www.brixtonhealth.com/hyperLQAS.findD.html)
 
-## A. The sampling design
+## 1. The sampling design
 
 1. Sampling assumptions: simple random sampling without replacement.
 
@@ -23,7 +21,7 @@ Source file/ link: [Brixton Health's sampling plan calculator](http://www.brixto
 
 3. The calculator only performs sampling plan calculation for single sampling.
 
-4. LQAS is identical to stratified sampling in which the samples are too small to provide acceptably narrow confidence intervals for estimates [@lemeshowstroh1989].
+4. LQAS is identical to stratified sampling in which the samples are too small to provide acceptably narrow confidence intervals for estimates (Lemeshow and Stroh, 1989).
 
 5. Deal with proportion.
 
@@ -39,15 +37,20 @@ Source file/ link: [Brixton Health's sampling plan calculator](http://www.brixto
 * Comparative surveys
 
 
-## B. Checking the calculator calculation
+## 2. Checking the calculator calculation
 
-*Specifications:*
-The calculator uses the following default specifications: 
-* Population size, $N = 600$ 
-* Upper threshold, $P = P_0 = 0.8$
-* Lower threshold, $P = P_a = 0.5$
+The *brixtonhealth* calculator uses the following default specifications:
+
+* Population size, $N = 600$
+
+* Upper threshold, $P_0 = 0.8$
+
+* Lower threshold, $P_a = 0.5$
+
 * Sample size, $n = 50$
-* Maximum tolerable $\lapha$ error = 0.1
+
+* Maximum tolerable $\alpha$ error = 0.1
+
 * Maximum tolerable $\beta$ error = 0.1
 
 
@@ -63,11 +66,11 @@ beta <- 0.1
 ```
 
 
-### Reference: Lemeshow and Stroh (1989)
+### 2.1 Check brixtonhealth calculation using Lemeshow and Stroh (1989) as reference
 
-Using the above specifications, the decision rule that the *brixtonhealth* calculator calculated is 33, actual $\alpha$ error is 0.0110, and actual $\beta$ error is 0.0057.
+Using the above specifications, the *brixtonhealth* calculator generates decision rule $d^*$ = 33, actual $\alpha$ error = 0.0110, and actual $\beta$ error = 0.0057.
 
-Calculating $\alpha$ and $\beta$ given decision rule, $d^*$ = 33 are:
+With $d^*$ = 33, we check the calculation of $\alpha$ and $\beta$:  
 
 ```{r}
 type1_error_hyper <- phyper(q=33, m = N*p_0, n = (N-N*p_0), k = n)
@@ -80,10 +83,15 @@ type2_error_hyper <- 1 - power_of_test
 type2_error_hyper
 ```
 
+We expect to get identical results as *brexithealth* calculator generates. That is, type 1 error = 0.0110 and type 2 error = 0.0057. We get `r round(type1_error_hyper,4)` and `r round(type2_error_hyper,4)` for type 1 error and type 2 error, respectively. Our calculation of actual $\alpha$ and actual $\beta$ are identical to those of *brexithealth* calculator. 
 
-### Reference: Lemeshow & Taber (1991)
+**How do we get the decision rule of 33?**
 
-Hypergeometric distribution is represented by the following formula [@lemeshowtaber1991]:
+### 2.2 Check brixtonhealth calculation using Lemeshow & Taber (1991) as reference
+
+Lemeshow & Taber (1991) uses normal approximation to hypergeometric distribution. 
+
+Hypergeometric distribution is represented by the following formula:
 $$
 \mathrm{P}(d \le d^*) = \sum_{d=0}^{d^*} \frac{\binom{NP_0}{d} \binom{N(1-P_0)}{n-d}}{\binom{N}{n}}
 $$
@@ -115,8 +123,8 @@ $$
 
 ```{r}
 z_0 <- qnorm(alpha, lower.tail = FALSE)
-z_a <- qnorm(beta, lower.tail = FALSE)
 paste0("z_0: ", round(z_0,3))
+z_a <- qnorm(beta, lower.tail = FALSE)
 paste0("z_a: ", round(z_a,3))
 
 # calculate n that makes the two d* equations equals
@@ -130,7 +138,33 @@ paste0("n: ", n_calc)
 paste0("d_star: ", ceiling(d_star))
 ```
 
+We expect to get identical results as *brexithealth* calculator generates. That is, decision rule = 33. However, we get decision rule =  `r ceiling(d_star)`.
 
+It could be that we do not get decision rule of 33 because we use maximum tolerable $\alpha$ and $\beta$ instead of actual $\alpha$ and actual $\beta$. We recalculate decision rule using actual $\alpha$ = 0.0110 and actual $\beta$ = 0.0057.
 
+```{r}
+actual_alpha <- 0.0110
+actual_beta <- 0.0057
+
+z_0_act <- qnorm(actual_alpha, lower.tail = FALSE)
+paste0("z_0: ", round(z_0_act,3))
+z_a_act <- qnorm(actual_beta, lower.tail = FALSE)
+paste0("z_a: ", round(z_a_act,3))
+
+# calculate n that makes the two d* equations equals
+numer <- z_0*sqrt(p_0*(1-p_0)) + z_a*sqrt(p_a*(1-p_a))
+denom <- p_0 - p_a
+
+n_calc <- ceiling((numer / denom)^2)
+d_star <- n_calc*p_0 - (z_0 * sqrt(n_calc*p_0*(1-p_0)))
+
+paste0("n: ", n_calc)
+paste0("d_star: ", ceiling(d_star))
+
+```
+
+The decision rule using actual $\alpha$ and actual $\beta$ is `r ceiling(d_star)`. It remains different from decision rule generated by *brexithealth*.
+
+Conclusion: the *brexithealth* calculator does not seem to use normal approximation to hypergeometric distribution.
 
 
