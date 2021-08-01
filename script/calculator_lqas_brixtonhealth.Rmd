@@ -96,7 +96,7 @@ We expect to get identical results as *brixtonhealth* calculator generates. That
 # create a function to find d*, decision rule based on alpha
 find_dstar <- function(N, p, n, alpha){
   dstar = 0
-  for (i in seq(n)) {
+  for (i in seq(from = 0, to = n)) {
     type_1_error <- phyper(q=i, m = N*p, n = (N-N*p), k = n)
     if (type_1_error <= alpha) {
       dstar = i
