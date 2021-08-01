@@ -39,6 +39,8 @@ Source link: [Brixton Health's sampling plan calculator](http://www.brixtonhealt
 
 ## 2. Checking the calculator calculation
 
+**Summary:** the calculation of actual $\alpha$ and actual $\beta$ that *brixtonhealth* calculator generates are correct and identical to the approach described in Lemeshow and Stroh (1989). Its resulting decision rule is slightly different than the decision rule that we calculated using Lemeshow and Stroh (1989) as reference. The *brixtonhealth* calculator uses hypergeometric distribution rather than normal approximation of hypergeometric distribution.
+
 The *brixtonhealth* calculator uses the following default specifications:
 
 * Population size, $N = 600$
@@ -67,6 +69,7 @@ beta <- 0.1
 
 
 ### 2.1 Check brixtonhealth calculation using Lemeshow and Stroh (1989) as reference
+
 
 **Check actual alpha and actual beta: ** 
 
