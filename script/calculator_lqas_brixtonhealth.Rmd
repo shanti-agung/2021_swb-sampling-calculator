@@ -12,7 +12,7 @@ Source link: [Brixton Health's sampling plan calculator](http://www.brixtonhealt
 
 ## 1. Summary
 
-The *brixtonhealth* calculator calculates a decision rule, actual type 1 error, and actual type 2 error given the generated decision rule for a lot quality assurance sampling (LQAS). To obtain these three outputs, user provides as input: the population size, the upper proportion threshold to construct the null hypothesis, the lower proportion threshold, sample size, maximum tolerable type 1 error, and maximum tolerable type 2 error. *brixtonhealth* calculation is based on hypergeometric distribution.
+The *brixtonhealth* calculator calculates decision rule (decision threshold), actual type 1 error, and actual type 2 error. To obtain these three outputs, a user provides as inputs: the population size, the upper proportion threshold to construct the null hypothesis, the lower proportion threshold, sample size, maximum tolerable type 1 error, and maximum tolerable type 2 error. The actual type 1 error and actual type 2 error are calculated for the decision rule that *brexihealth* generates and the sample size, population size, upper threshold, and lower threshold that users specified.*brixtonhealth* calculation is based on hypergeometric distribution.
 
 Study type(s) this calculator would be suitable for: 
 * Point in time surveys to estimate a proportion
@@ -24,7 +24,7 @@ Study type(s) this calculator would be suitable for:
 
 1. What are the sampling assumptions  made for the calculator? 
 * simple random sampling without replacement
-* one-tail test
+* one-sided test
 
 
 2. What measure of accuracy is used for sample size calculation? 
@@ -38,7 +38,7 @@ Study type(s) this calculator would be suitable for:
 
 
 4. Is the calculator calculation correct?
-The calculator outputs are: decision rule, actual $\alpha$ error, and actual $\beta$ error. The calculation of actual $\alpha$ error and actual $\beta$ error that *brixtonhealth* calculator generates are correct. The decision rule that *brixtonhealth* generates fulfills the conditions of lower than the maximum tolerable type 1 error and the maximum tolerable type 2 error that user specified. Section 3 provides details of how we checked the calculator calculation.
+The calculator outputs are: decision rule, actual $\alpha$ error, and actual $\beta$ error. The calculation of actual $\alpha$ error and actual $\beta$ error that *brixtonhealth* calculator generates are correct for the decision rule that the calculator produces. The decision rule that *brixtonhealth* generates fulfills the conditions of lower than the maximum tolerable type 1 error and the maximum tolerable type 2 error that user specified. Section 3 provides details of how we checked the calculator calculation.
 
 
 5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
@@ -60,7 +60,7 @@ The calculator outputs are: decision rule, actual $\alpha$ error, and actual $\b
 
 
 
-## 2. Checking the calculator calculation
+## 3. Checking the calculator calculation
 
 **Summary:** the calculation of actual $\alpha$ and actual $\beta$ that *brixtonhealth* calculator generates are correct and identical to the approach described in Lemeshow and Stroh (1989). Its resulting decision rule is slightly different than the decision rule that we calculated using Lemeshow and Stroh (1989) as reference. The *brixtonhealth* calculator uses hypergeometric distribution rather than normal approximation of hypergeometric distribution.
 
@@ -201,33 +201,16 @@ This approach results in decision rule of 29.
 
 The decision rule that *brixtonhealth* produces is within the range of our calculated decision rules. Additionally, the decision rule results in type 1 error and type 2 error that are lower than the maximum allowable type 1 error and type 2 error that user specified. Therefore, we conclude that the calculator correctly calculates the decision rule. 
 
-```{r}
-find_dstar(N=N, p=p_0, n=n, alpha=0.02)
-```
-
-```{r}
-phyper(q=33, m = N*p_0, n = (N-N*p_0), k = n)
-```
-
-```{r}
-find_dstar(N=N, p=p_0, n=40, alpha=0.02)
-```
-```{r}
-phyper(q=26, m = N*p_0, n = (N-N*p_0), k = 40)
-```
-
-```{r}
-find_dstar(N=N, p=p_0, n=25, alpha=0.05)
-```
-
-```{r}
-phyper(q=16, m = N*p_0, n = (N-N*p_0), k = 25)
-```
-
-```{r}
-find_dstar(N=N, p=p_0, n=15, alpha=0.1)
-```
-
+We also checked whether the calculator uses normal approximation to hypergeometric distribution, as explained in Lemeshow and Taber (1991). We follow formulas in Lemeshow and Taber (1991) to calculate sample size and decision rule. 
+Sample size:
+$$
+n = \left(\frac{z_{1-\alpha} \sqrt{P_0(1-P_0)} + z_{1-\beta} \sqrt{P_a(1-P_a)}}{(P_0 - P_a)}  \right)^2
+$$
+Decision rule:
+$$
+d^* = nP_0 - z_{1-\alpha} \sqrt{nP_0(1-P_0)\left( \frac{N-n}{N-1}\right)}  
+$$
+We concluded that the *brexithealth* calculator does not use the use normal approximation to hypergeometric distribution in its calculation. 
 
 **Input validation check**
 
@@ -253,93 +236,80 @@ find_dstar(N=N, p=p_0, n=15, alpha=0.1)
 
 *check 11:* input: sample size = 40 and other inputs are their default values, outputs: decision rule = 26, actual $\alpha$ error = 0.0160, and actual $\beta$ error = 0.0161. Given sample size = 40 and decision rule = 26, the calculator generates correct actual $\alpha$ error and actual $\beta$ error.
 
-
-
-## Limitation
-
-* The calculator 
-
-
-### 2.2 Check brixtonhealth calculation using Lemeshow & Taber (1991) as reference
-
-Lemeshow & Taber (1991) uses normal approximation to hypergeometric distribution. 
-
-Hypergeometric distribution is represented by the following formula:
-$$
-\mathrm{P}(d \le d^*) = \sum_{d=0}^{d^*} \frac{\binom{NP_0}{d} \binom{N(1-P_0)}{n-d}}{\binom{N}{n}}
-$$
-The mean and variance of hypergeometric distribution with sample size $n$ and the hypothesized proportion $P_0$ are:
-
-$$
-\mathrm{mean}(d) = nP_0
-$$
-and
-$$
-\mathrm{var}(d) = nP_0(1-P_0)\left( \frac{N-n}{N-1} \right)
-$$
-
-If the calculator uses normal approximation to the hypergeometric distribution, then $d$ would be calculated as:
-$$
-d^* = nP_0 - z_{1-\alpha} \sqrt{nP_0(1-P_0)\left( \frac{N-n}{N-1}\right)}  
-$$
-Because $P_a$ and $\beta$ are also specified in the calculator, 
-
-$$
-d^* = nP_0 - z_{1-\beta} \sqrt{nP_a(1-P_a)\left( \frac{N-n}{N-1}\right)}  
-$$
-
-Setting the above two equations for $d$ equal to each other, and solving for $n$:
-$$
-n = \left(\frac{z_{1-\alpha} \sqrt{P_0(1-P_0)} + z_{1-\beta} \sqrt{P_a(1-P_a)}}{(P_0 - P_a)}  \right)^2
-$$
-
+*check 11:* input: upper threshold = 0.7 and other inputs are their default values, outputs: decision rule = 30, actual $\alpha$ error = 0.0757, and actual $\beta$ error = 0.0517. Shown below, the calculator generates correct outputs.
 
 ```{r}
-N <- 1000000 # set population size so that N >> n
-
-z_0 <- qnorm(alpha, lower.tail = FALSE)
-paste0("z_0: ", round(z_0,3))
-z_a <- qnorm(beta, lower.tail = FALSE)
-paste0("z_a: ", round(z_a,3))
-
-# calculate n that makes the two d* equations equals
-numer <- z_0*sqrt(p_0*(1-p_0)) + z_a*sqrt(p_a*(1-p_a))
-denom <- p_0 - p_a
-
-n_calc <- ceiling((numer / denom)^2)
-d_star <- n_calc*p_0 - (z_0 * sqrt(n_calc*p_0*(1-p_0)))
-
-paste0("n: ", n_calc)
-paste0("d_star: ", ceiling(d_star))
+find_dstar(N=N, p=0.7, n=50, alpha=0.1)
+```
+```{r}
+# actual type 1 error
+phyper(q=30, m = N*0.7, n = (N-N*0.7), k = 50)
+```
+```{r}
+# actual type 2 error
+1 - phyper(q=30, m = N*0.5, n = (N-N*0.5), k = 50)
 ```
 
-We expect to get identical results as *brexithealth* calculator generates. That is, decision rule = 33. However, we get decision rule =  `r ceiling(d_star)`.
 
-It could be that we do not get decision rule of 33 because we use maximum tolerable $\alpha$ and $\beta$ instead of actual $\alpha$ and actual $\beta$. We recalculate decision rule using actual $\alpha$ = 0.0110 and actual $\beta$ = 0.0057.
+*check 12:* input: upper threshold = 0.5 and other inputs are their default values, outputs: warning "Upper threshold must be above lower threshold".
+
+*check 13:* input: upper threshold = none (left missing) and other inputs are their default values, outputs: decision rule = 0, actual $\alpha$ error = NaN, and actual $\beta$ error = 0. Calculator provides some outputs even when upper threshold is missing.
+
+*check 14:* input: lower threshold = 0.4 and other inputs are their default values, outputs: decision rule = 30, actual $\alpha$ error = 0.0005, and actual $\beta$ error = 0.0009. Shown below, the calculator generates correct outputs.
 
 ```{r}
-actual_alpha <- 0.0110
-actual_beta <- 0.0057
-
-z_0_act <- qnorm(actual_alpha, lower.tail = FALSE)
-paste0("z_0: ", round(z_0_act,3))
-z_a_act <- qnorm(actual_beta, lower.tail = FALSE)
-paste0("z_a: ", round(z_a_act,3))
-
-# calculate n that makes the two d* equations equals
-numer <- z_0*sqrt(p_0*(1-p_0)) + z_a*sqrt(p_a*(1-p_a))
-denom <- p_0 - p_a
-
-n_calc <- ceiling((numer / denom)^2)
-d_star <- n_calc*p_0 - (z_0 * sqrt(n_calc*p_0*(1-p_0)))
-
-paste0("n: ", n_calc)
-paste0("d_star: ", ceiling(d_star))
-
+# actual type 1 error
+phyper(q=30, m = N*0.8, n = (N-N*0.8), k = 50)
 ```
 
-The decision rule using actual $\alpha$ and actual $\beta$ is `r ceiling(d_star)`. It remains different from decision rule generated by *brexithealth*.
+```{r}
+# actual type 2 error
+1 - phyper(q=30, m = N*0.4, n = (N-N*0.4), k = 50)
+```
 
-Conclusion: the *brexithealth* calculator does not seem to use normal approximation to hypergeometric distribution.
+
+*check 15:* input: lower threshold = 0 and other inputs are their default values, outputs: decision rule = 0, actual $\alpha$ error = 0.000, and actual $\beta$ error = 0.000. Shown below, given decision rule = 0, the calculator generates correct outputs.
+
+```{r}
+# actual type 1 error
+phyper(q=0, m = N*0.8, n = (N-N*0.8), k = 50)
+```
+
+```{r}
+# actual type 2 error
+1 - phyper(q=0, m = N*0, n = (N-N*0), k = 50)
+```
+
+*check 16:* input: population size = 1 and other inputs are their default values, outputs: warning "sample size must be smaller than population size"
+
+*check 17:* input: population size = 1,000,000 and other inputs are their default values, outputs: decision rule = 33, actual $\alpha$ error = 0.0110, and actual $\beta$ error = 0.0057. Shown below, given decision rule = 33, the calculator generates correct outputs.
+
+```{r}
+# actual type 1 error
+phyper(q=33, m = 1000000*p_0, n = (1000000-1000000*p_0), k = 50)
+```
+
+```{r}
+# actual type 2 error
+1 - phyper(q=33, m =1000000*p_a, n = (1000000-1000000*p_a), k = 50)
+```
+
+
+## 4. Limitations
+
+* The calculator is limited to LQAS single sampling plans. It does not provide guidance for LQAS double sampling plans.
+
+* It does not calculate sample size. Users are expected to provide the sample size as part of the calculator input. 
+
+* The calculator generates outputs even if some of the inputs are missing. 
+
+* It is not completely clear how the calculator utilizes the maximum tolerable $\alpha$ error and the maximum tolerable $\beta$ error that users specify. The calculator' outputs may remain the same even when the value of maximum tolerable $\alpha$ error or the maximum tolerable $\beta$ error varies. For example, see check #4, #5, #6 in *Input validation check* section.
+
+* The power achieved from the sampling is not directly. To obtain the power achieved from the sampling plan, users must conduct an additional calculation, that is, 1 - actual $\beta$ error. 
+
+* The calculator is limited to calculating LQAS sampling plan based on hypergeometric distribution. It does not cover LQAS sampling plans that are based on binomial approximation to the hypergeometric distribution, or normal approximation to the hypergeometric distribution.
+
+
+
 
 
