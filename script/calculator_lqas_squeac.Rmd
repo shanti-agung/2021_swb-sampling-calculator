@@ -28,7 +28,9 @@ Study type(s) this calculator would be suitable for:
 ## 2. Review Checklist
 
 1. What are the sampling assumptions  made for the calculator? 
-
+* Simple random sampling without replacement
+* Population size is very relative to the sample size such that computing sample sizes and their errors (type 1 and type 2) can be accomplished using normal distribution and binomial distribution, respectively. 
+* One-sided test
 
 
 2. What measure of accuracy is used for sample size calculation? 
@@ -43,7 +45,7 @@ Study type(s) this calculator would be suitable for:
 
 4. Is the calculator calculation correct?
 
- Section 3 provides details of how we checked the calculator calculation.
+ Section 4 provides details of how we checked the calculator calculation.
 
 
 5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
@@ -57,15 +59,21 @@ Study type(s) this calculator would be suitable for:
 
 
 7. Accuracy of continuous variable estimate as well as that of proportion?
-* The calculator only deals with proportion in term of percentages.
+* The calculator only deals with proportion (in term of percentages).
 
 
 8. How does calculator deal with effect of non-response bias on accuracy?
 * No mention of non-response.
 
 
-## 3. Checking the calculator calculation
+## 3. Limitations
 
+
+## 4. Checking the calculator calculation
+
+**Summary:**
+
+### Verify calculation: input parameters set 1
 
 To check the calculation of *squeac* calculator, we use input parameters below:
 
@@ -81,14 +89,15 @@ These input parameters are similar to those in Lemeshow and Taber (1991)
 
 ```{r}
 # set input parameters
-alpha <- 0.05 # lower error level?
-beta <- 0.2 # upper error level?
+alpha <- 0.05 # upper error level
+beta <- 0.2 # lower error level
 p_0 <- 0.2    # upper standard
 p_a <- 0.1    # lower standard
 
 ```
 
 Suppose the calculator uses normal approximation to the hypergeometric distribution. Following Lemeshow and Taber (1991), the formula for sample size is: 
+
 Sample size:
 $$
 n = \left(\frac{z_{1-\alpha} \sqrt{P_0(1-P_0)} + z_{1-\beta} \sqrt{P_a(1-P_a)}}{(P_0 - P_a)}  \right)^2
@@ -114,7 +123,120 @@ paste0("d_star: ", ceiling(d_star))
 ```
 
 ```{r}
-type_1_error <- pbinom(11, size = 83, prob = 0.2)
-type_1_error
+# P(d<= 11) given n = 83 and d_star = 11 (results and input parameters as Lemeshow and Taber, 1991)
+pbinom(11, size = 83, prob = 0.2) # also type 1 error
+```
+If the proportion of infected (or uncovered) people in the population is 0.2, the probability of observing 11 people infected in a sample of size 83 is 0.076 (about 7-8 percent), quite small, but larger than the specified upper error level of 5 percent. This is also the probability of concluding that the population has enough coverage (accept the lot) when in reality it is not. 
+
+**check upper and lower given n = 81 and d = 10**
+
+```{r}
+# calculate type 1 error using calculator output: n = 81, d = 10.
+# other input parameter: p_0 (upper standard) = 0.2
+type_1_error <- pbinom(q=10, size = 81, prob = 0.2)
+type_1_error # actual upper error level
+```
+The *squeac* calculator generates upper error = 5%. Thus, *squeac* output for upper error matches with our calculation of type 1 error = `r round(type_1_error, 3)`.
+
+```{r}
+# check type 2 error / "lower error" output, using calculator output: n = 81, d 10
+# other input parameter: p_a (lower standard) = 0.1
+1-pbinom(q=10, size = 81, prob = 0.1) # actual lower error level
+```
+The resulting calculation is similar to the output of *squeac* calculator of 18%.
+
+```{r}
+# recalculate type 1 error using normal distribution
+pnorm(q = 10, mean = 81*p_0, sd = sqrt(81*p_0*(1-p_0))) # type 1 error
 ```
 
+```{r}
+# recalculate type 2 error using normal distribution
+1 - pnorm(q = 10, mean = 81*p_a, sd = sqrt(81*p_a*(1-p_a)))
+
+```
+
+**check upper and lower given n = 82 and d = 10**
+```{r}
+# calculate type 1 error using calculator output: n = 82, d = 10.
+# other input parameter: p_0 (upper standard) = 0.2
+type_1_error <- pbinom(q=10, size = 82, prob = 0.2)
+type_1_error # actual upper error level
+```
+
+calculator output, upper = 5%. very close. 
+
+```{r}
+#recalculate using normal distribution
+pnorm(q = 10, mean = 82*p_0, sd = sqrt(82*p_0*(1-p_0))) # type 1 error
+```
+recalculation off.
+
+```{r}
+# check type 2 error / "lower error" output, using calculator output: n = 82, d 10
+# other input parameter: p_a (lower standard) = 0.1
+1-pbinom(q=10, size = 82, prob = 0.1) # actual lower error level
+```
+
+calculator output, lower = 19%. correct.
+
+### Verify calculation: input parameters set 2
+
+Check with different input parameters
+
+```{r}
+# set different input parameters
+alpha <- 0.01 # upper error level
+beta <- 0.2 # lower error level
+p_0 <- 0.8    # upper standard
+p_a <- 0.5    # lower standard
+```
+
+```{r}
+z_0 <- qnorm(alpha, lower.tail = FALSE)
+paste0("z_0: ", round(z_0,3))
+z_a <- qnorm(beta, lower.tail = FALSE)
+paste0("z_a: ", round(z_a,3))
+```
+
+```{r}
+# calculate n
+numer <- z_0*sqrt(p_0*(1-p_0)) + z_a*sqrt(p_a*(1-p_a))
+denom <- p_0 - p_a
+
+n_calc <- ceiling((numer / denom)^2)
+d_star <- n_calc*p_0 - (z_0 * sqrt(n_calc*p_0*(1-p_0)))
+
+paste0("n: ", n_calc)
+paste0("d_star: ", ceiling(d_star))
+```
+
+calculator outputs start from n = 21 and d = 12. very close.
+
+```{r}
+# calculate type 1 error: n = 21, d = 13.
+# other input parameter: p_0 (upper standard) = p_0 = 0.8
+type_1_error <- pbinom(q=13, size = 21, prob = p_0)
+type_1_error # actual upper error level
+```
+
+Higher than the specified $\alpha$, upper error level = 0.01
+
+**check upper and lower given n = 21 and d = 12**
+
+```{r}
+# calculate type 1 error: n = 21, d = 13.
+# other input parameter: p_0 (upper standard) = p_0 = 0.8
+type_1_error <- pbinom(q=12, size = 21, prob = p_0)
+type_1_error # actual upper error level
+```
+
+calculator output: 1%. correct.
+
+```{r}
+# check type 2 error / "lower error" output, using calculator output: n = 81, d 10
+# other input parameter: p_a (lower standard) = 0.5
+1-pbinom(q=12, size = 21, prob = p_a) # actual lower error level
+```
+
+calculator ouput: 19%. correct.
