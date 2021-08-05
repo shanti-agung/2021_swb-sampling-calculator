@@ -1,0 +1,120 @@
+---
+title: "Review of LQAS Sampling Plan Calculator"
+subtitle: "SQUEAC Calculator"
+author: "Team 2"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Source: `SQUEAC.Setup.exe`
+
+## 1. Summary
+
+The *squeac* calculator calculates combinations of sample size and decision rule (decision threshold). Its input parameters are: upper standard (upper threshold proportion), lower standard (lower threshold proportion), lower error level (type 1 error), and upper error level (type 2 error). Given these input parameters, the calculator generates a list of pairs of sample size and its decision rule, and their associated actual lower error level (actual type 1 error) and actual upper error level (actual type 2 error).
+
+Study type(s) this calculator would be suitable for:
+
+* Point in time surveys to estimate a proportion
+
+* Humanitarian surveys
+
+* Comparative surveys
+
+
+## 2. Review Checklist
+
+1. What are the sampling assumptions  made for the calculator? 
+
+
+
+2. What measure of accuracy is used for sample size calculation? 
+* No mention of confidence interval
+* No mention of coefficient of variation
+* Other: upper error level and lower error level.
+
+
+3. If it includes continuous variables how do they determine variance of estimates since a distribution needs to be known or assumptions made about the distribution?
+* Not applicable because the calculator does not include continuous variables. 
+
+
+4. Is the calculator calculation correct?
+
+ Section 3 provides details of how we checked the calculator calculation.
+
+
+5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
+* The sampling unit is not cluster.
+* No mention of design effect.
+* The calculator only performs sampling plan calculation for single sampling.
+
+
+6. Is probability proportional to size, stratification, double sampling?
+* LQAS is identical to stratified sampling in which the samples are too small to provide acceptably narrow confidence intervals for estimates (Lemeshow and Stroh, 1989).
+
+
+7. Accuracy of continuous variable estimate as well as that of proportion?
+* The calculator only deals with proportion in term of percentages.
+
+
+8. How does calculator deal with effect of non-response bias on accuracy?
+* No mention of non-response.
+
+
+## 3. Checking the calculator calculation
+
+
+To check the calculation of *squeac* calculator, we use input parameters below:
+
+* lower standard: 50%
+
+* upper standard: 80%
+
+* upper error level: 10%
+
+* lower error level: 10%
+
+These input parameters are similar to those in Lemeshow and Taber (1991)
+
+```{r}
+# set input parameters
+alpha <- 0.05 # lower error level?
+beta <- 0.2 # upper error level?
+p_0 <- 0.2    # upper standard
+p_a <- 0.1    # lower standard
+
+```
+
+Suppose the calculator uses normal approximation to the hypergeometric distribution. Following Lemeshow and Taber (1991), the formula for sample size is: 
+Sample size:
+$$
+n = \left(\frac{z_{1-\alpha} \sqrt{P_0(1-P_0)} + z_{1-\beta} \sqrt{P_a(1-P_a)}}{(P_0 - P_a)}  \right)^2
+$$
+
+```{r}
+z_0 <- qnorm(alpha, lower.tail = FALSE)
+paste0("z_0: ", round(z_0,3))
+z_a <- qnorm(beta, lower.tail = FALSE)
+paste0("z_a: ", round(z_a,3))
+```
+
+```{r}
+# calculate n
+numer <- z_0*sqrt(p_0*(1-p_0)) + z_a*sqrt(p_a*(1-p_a))
+denom <- p_0 - p_a
+
+n_calc <- ceiling((numer / denom)^2)
+d_star <- n_calc*p_0 - (z_0 * sqrt(n_calc*p_0*(1-p_0)))
+
+paste0("n: ", n_calc)
+paste0("d_star: ", ceiling(d_star))
+```
+
+```{r}
+type_1_error <- pbinom(11, size = 83, prob = 0.2)
+type_1_error
+```
+
