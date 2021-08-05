@@ -1,5 +1,6 @@
 ---
 title: "Review of LQAS Sampling Plan Calculator"
+subtitle: "Brixton Health Calculator"
 author: "Team 2"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: pdf_document
@@ -232,7 +233,7 @@ We concluded that the *brexithealth* calculator does not use the use normal appr
 
 *check 11:* input: sample size = 40 and other inputs are their default values, outputs: decision rule = 26, actual $\alpha$ error = 0.0160, and actual $\beta$ error = 0.0161. Given sample size = 40 and decision rule = 26, the calculator generates correct actual $\alpha$ error and actual $\beta$ error.
 
-*check 11:* input: upper threshold = 0.7 and other inputs are their default values, outputs: decision rule = 30, actual $\alpha$ error = 0.0757, and actual $\beta$ error = 0.0517. Shown below, the calculator generates correct outputs.
+*check 12:* input: upper threshold = 0.7 and other inputs are their default values, outputs: decision rule = 30, actual $\alpha$ error = 0.0757, and actual $\beta$ error = 0.0517. Shown below, the calculator generates correct outputs.
 
 ```{r}
 find_dstar(N=N, p=0.7, n=50, alpha=0.1)
@@ -247,11 +248,11 @@ phyper(q=30, m = N*0.7, n = (N-N*0.7), k = 50)
 ```
 
 
-*check 12:* input: upper threshold = 0.5 and other inputs are their default values, outputs: warning "Upper threshold must be above lower threshold".
+*check 13:* input: upper threshold = 0.5 and other inputs are their default values, outputs: warning "Upper threshold must be above lower threshold".
 
-*check 13:* input: upper threshold = none (left missing) and other inputs are their default values, outputs: decision rule = 0, actual $\alpha$ error = NaN, and actual $\beta$ error = 0. Calculator provides some outputs even when upper threshold is missing.
+*check 14:* input: upper threshold = none (left missing) and other inputs are their default values, outputs: decision rule = 0, actual $\alpha$ error = NaN, and actual $\beta$ error = 0. Calculator provides some outputs even when upper threshold is missing.
 
-*check 14:* input: lower threshold = 0.4 and other inputs are their default values, outputs: decision rule = 30, actual $\alpha$ error = 0.0005, and actual $\beta$ error = 0.0009. Shown below, the calculator generates correct outputs.
+*check 15:* input: lower threshold = 0.4 and other inputs are their default values, outputs: decision rule = 30, actual $\alpha$ error = 0.0005, and actual $\beta$ error = 0.0009. Shown below, the calculator generates correct outputs.
 
 ```{r}
 # actual type 1 error
@@ -264,7 +265,7 @@ phyper(q=30, m = N*0.8, n = (N-N*0.8), k = 50)
 ```
 
 
-*check 15:* input: lower threshold = 0 and other inputs are their default values, outputs: decision rule = 0, actual $\alpha$ error = 0.000, and actual $\beta$ error = 0.000. Shown below, given decision rule = 0, the calculator generates correct outputs.
+*check 16:* input: lower threshold = 0 and other inputs are their default values, outputs: decision rule = 0, actual $\alpha$ error = 0.000, and actual $\beta$ error = 0.000. Shown below, given decision rule = 0, the calculator generates correct outputs.
 
 ```{r}
 # actual type 1 error
@@ -276,9 +277,9 @@ phyper(q=0, m = N*0.8, n = (N-N*0.8), k = 50)
 1 - phyper(q=0, m = N*0, n = (N-N*0), k = 50)
 ```
 
-*check 16:* input: population size = 1 and other inputs are their default values, outputs: warning "sample size must be smaller than population size"
+*check 17:* input: population size = 1 and other inputs are their default values, outputs: warning "sample size must be smaller than population size"
 
-*check 17:* input: population size = 1,000,000 and other inputs are their default values, outputs: decision rule = 33, actual $\alpha$ error = 0.0144, and actual $\beta$ error = 0.0077. Shown below, given decision rule = 33, the calculator generates correct outputs.
+*check 18:* input: population size = 1,000,000 and other inputs are their default values, outputs: decision rule = 33, actual $\alpha$ error = 0.0144, and actual $\beta$ error = 0.0077. Shown below, given decision rule = 33, the calculator generates correct outputs.
 
 ```{r}
 # actual type 1 error
