@@ -28,7 +28,7 @@ Study type(s) this calculator would be suitable for:
 
 1. What are the sampling assumptions  made for the calculator? 
 * Simple random sampling without replacement
-* Population size is very large relative to the sample size such that computing sample sizes and their errors (type 1 and type 2) can be accomplished using normal distribution and binomial distribution, respectively. 
+* Population size is very large relative to the sample size such that computing sample sizes and their errors (type 1 and type 2) can be accomplished using the normal distribution and the binomial distribution, respectively. 
 * One-sided test
 
 
@@ -74,11 +74,11 @@ For each pair of sample size and decision rule that the calculator generates, it
 * The power achieved from the sampling is not directly available for users. To obtain the power achieved from the sampling plan, users must conduct an additional step of calculation. 
 
 
-## 4. Verify the squeac calculator calculation
+## 4. Verification of the SQUEAC calculator calculation
 
 ### 4.1 Verify calculation: input parameters set 1
 
-To check the calculation of *squeac* calculator, we use input parameters as follow: lower standard = 50%, upper standard = 80%, upper error level = 10%, and lower error level = 10%. These input parameters are similar to those in Lemeshow and Taber (1991).
+To check the calculation of the *squeac* calculator, we use input parameters as follow: lower standard = 50%, upper standard = 80%, upper error level = 10%, and lower error level = 10%. These input parameters are similar to those in Lemeshow and Taber (1991).
 
 ```{r}
 # set input parameters
@@ -140,7 +140,7 @@ The *squeac* calculator generates upper error = 5%. Thus, *squeac* output for up
 # other input parameter: p_a (lower standard) = 0.1
 1-pbinom(q=10, size = 81, prob = 0.1) # actual lower error level
 ```
-The resulting calculation is similar to the output of *squeac* calculator of 18%.
+The resulting calculation is similar to the output of the *squeac* calculator = 18%.
 
 
 **check upper and lower given n = 82 and d = 10**
@@ -151,7 +151,7 @@ type_1_error <- pbinom(q=10, size = 82, prob = 0.2)
 type_1_error # actual upper error level
 ```
 
-calculator output, upper = 5%. very close. 
+The *squeac* calculator output, upper = 5%. very close. 
 
 
 ```{r}
@@ -160,7 +160,7 @@ calculator output, upper = 5%. very close.
 1-pbinom(q=10, size = 82, prob = 0.1) # actual lower error level
 ```
 
-calculator output, lower = 19%. correct.
+The *squeac* calculator output, lower = 19%. correct.
 
 
 ### 4.2 Verify calculation: input parameters set 2
@@ -212,7 +212,7 @@ type_1_error <- pbinom(q=12, size = 21, prob = p_0)
 type_1_error # actual upper error level
 ```
 
-calculator output: 1%. correct.
+The *squeac* calculator output = 1%. correct.
 
 ```{r}
 # check type 2 error / "lower error" output, using calculator output: n = 81, d 10
@@ -220,7 +220,7 @@ calculator output: 1%. correct.
 1-pbinom(q=12, size = 21, prob = p_a) # actual lower error level
 ```
 
-calculator ouput: 19%. correct.
+The *squeac* calculator ouput = 19%. correct.
 
 ### 4.3 Input validation check
 
