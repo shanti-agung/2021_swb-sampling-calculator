@@ -1,7 +1,6 @@
 ---
 title: "Review of LQAS Sampling Plan Calculator"
 subtitle: "SQUEAC Calculator"
-author: "Team 2"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: pdf_document
 ---
@@ -14,7 +13,7 @@ Source: `SQUEAC.Setup.exe`
 
 ## 1. Summary
 
-The *squeac* calculator calculates combinations of sample size and decision rule (decision threshold). Its input parameters are: upper standard (upper threshold proportion), lower standard (lower threshold proportion), lower error level (type 1 error), and upper error level (type 2 error). Given these input parameters, the calculator generates a list of pairs of sample size and its decision rule, and their associated actual lower error level (actual type 1 error) and actual upper error level (actual type 2 error).
+The *squeac* calculator calculates sample sizes and decision rules (decision thresholds) for a LQAS. Its input parameters are upper standard (upper threshold proportion), lower standard (lower threshold proportion), lower error level (type 1 error), and upper error level (type 2 error). Given these input parameters, the calculator generates a list of pairs of sample size and its decision rule, and their associated actual lower error level (actual type 1 error) and actual upper error level (actual type 2 error).
 
 Study type(s) this calculator would be suitable for:
 
@@ -29,14 +28,14 @@ Study type(s) this calculator would be suitable for:
 
 1. What are the sampling assumptions  made for the calculator? 
 * Simple random sampling without replacement
-* Population size is very relative to the sample size such that computing sample sizes and their errors (type 1 and type 2) can be accomplished using normal distribution and binomial distribution, respectively. 
+* Population size is very large relative to the sample size such that computing sample sizes and their errors (type 1 and type 2) can be accomplished using normal distribution and binomial distribution, respectively. 
 * One-sided test
 
 
 2. What measure of accuracy is used for sample size calculation? 
 * No mention of confidence interval
 * No mention of coefficient of variation
-* Other: upper error level and lower error level.
+* Other: upper error level (type 1 error) and lower error level (type 2 error).
 
 
 3. If it includes continuous variables how do they determine variance of estimates since a distribution needs to be known or assumptions made about the distribution?
@@ -44,8 +43,7 @@ Study type(s) this calculator would be suitable for:
 
 
 4. Is the calculator calculation correct?
-
- Section 4 provides details of how we checked the calculator calculation.
+For each pair of sample size and decision rule that the calculator generates, its actual upper level error (type 1 error) and actual lower level error (type 2 error) are calculated correctly. For the calculation of sample sizes and decision rules, the *squeac* calculator outputs are very similar to our our calculation. Section 4 provides details of how we verified the calculator calculation.
 
 
 5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
@@ -59,7 +57,7 @@ Study type(s) this calculator would be suitable for:
 
 
 7. Accuracy of continuous variable estimate as well as that of proportion?
-* The calculator only deals with proportion (in term of percentages).
+* The calculator only deals with proportion.
 
 
 8. How does calculator deal with effect of non-response bias on accuracy?
@@ -68,24 +66,18 @@ Study type(s) this calculator would be suitable for:
 
 ## 3. Limitations
 
+* The calculator is limited to LQAS single sampling plans. It does not provide guidance for LQAS double sampling plans.
 
-## 4. Checking the calculator calculation
+* It is applicability is limited to situations where the population size is very large relative to the sample size. It is not suitable for situations where sample is drawn without replacement from a small population. 
 
-**Summary:**
+* The power achieved from the sampling is not directly available for users. To obtain the power achieved from the sampling plan, users must conduct an additional step of calculation. 
+
+
+## 4. Verify the squeac calculator calculation
 
 ### Verify calculation: input parameters set 1
 
-To check the calculation of *squeac* calculator, we use input parameters below:
-
-* lower standard: 50%
-
-* upper standard: 80%
-
-* upper error level: 10%
-
-* lower error level: 10%
-
-These input parameters are similar to those in Lemeshow and Taber (1991)
+To check the calculation of *squeac* calculator, we use input parameters as follow: lower standard = 50%, upper standard = 80%, upper error level = 10%, and lower error level = 10%. These input parameters are similar to those in Lemeshow and Taber (1991).
 
 ```{r}
 # set input parameters
@@ -96,7 +88,7 @@ p_a <- 0.1    # lower standard
 
 ```
 
-Suppose the calculator uses normal approximation to the hypergeometric distribution. Following Lemeshow and Taber (1991), the formula for sample size is: 
+If the calculator uses normal approximation to the hypergeometric distribution, following Lemeshow and Taber (1991), the formula for sample size is: 
 
 Sample size:
 $$
@@ -122,11 +114,15 @@ paste0("n: ", n_calc)
 paste0("d_star: ", ceiling(d_star))
 ```
 
+The *squeac* calculator generates outputs that start from n = 81 and d = 10. Very similar.
+
 ```{r}
-# P(d<= 11) given n = 83 and d_star = 11 (results and input parameters as Lemeshow and Taber, 1991)
-pbinom(11, size = 83, prob = 0.2) # also type 1 error
+# calculate P(d<=11)
+pbinom(11, size = 83, prob = 0.2)
 ```
-If the proportion of infected (or uncovered) people in the population is 0.2, the probability of observing 11 people infected in a sample of size 83 is 0.076 (about 7-8 percent), quite small, but larger than the specified upper error level of 5 percent. This is also the probability of concluding that the population has enough coverage (accept the lot) when in reality it is not. 
+
+Higher than the specified $\alpha$, upper error level = 0.05
+
 
 **check upper and lower given n = 81 and d = 10**
 
@@ -145,16 +141,6 @@ The *squeac* calculator generates upper error = 5%. Thus, *squeac* output for up
 ```
 The resulting calculation is similar to the output of *squeac* calculator of 18%.
 
-```{r}
-# recalculate type 1 error using normal distribution
-pnorm(q = 10, mean = 81*p_0, sd = sqrt(81*p_0*(1-p_0))) # type 1 error
-```
-
-```{r}
-# recalculate type 2 error using normal distribution
-1 - pnorm(q = 10, mean = 81*p_a, sd = sqrt(81*p_a*(1-p_a)))
-
-```
 
 **check upper and lower given n = 82 and d = 10**
 ```{r}
@@ -166,11 +152,6 @@ type_1_error # actual upper error level
 
 calculator output, upper = 5%. very close. 
 
-```{r}
-#recalculate using normal distribution
-pnorm(q = 10, mean = 82*p_0, sd = sqrt(82*p_0*(1-p_0))) # type 1 error
-```
-recalculation off.
 
 ```{r}
 # check type 2 error / "lower error" output, using calculator output: n = 82, d 10
@@ -179,6 +160,7 @@ recalculation off.
 ```
 
 calculator output, lower = 19%. correct.
+
 
 ### Verify calculation: input parameters set 2
 
@@ -214,10 +196,8 @@ paste0("d_star: ", ceiling(d_star))
 calculator outputs start from n = 21 and d = 12. very close.
 
 ```{r}
-# calculate type 1 error: n = 21, d = 13.
-# other input parameter: p_0 (upper standard) = p_0 = 0.8
-type_1_error <- pbinom(q=13, size = 21, prob = p_0)
-type_1_error # actual upper error level
+# calculate P(d<= 13)
+pbinom(q=13, size = 21, prob = p_0)
 ```
 
 Higher than the specified $\alpha$, upper error level = 0.01
@@ -240,3 +220,16 @@ calculator output: 1%. correct.
 ```
 
 calculator ouput: 19%. correct.
+
+### Input validation check
+
+*check 1*: lower standard = none (left missing), upper standard = 10%, and other inputs are their default values, outputs: warning "You must specify a number (%) for the lower level".
+
+*check 2*: upper standard = none (left missing), lower standard = 5%, and other inputs are their default values, outputs: warning "You must specify a number (%) for the upper level".
+
+*check 3*: lower standard = 10%, upper standard = 5%, and other inputs are their default values, outputs: warning "Upper level may not be less than lower level".
+
+*check 4*: lower standard = 10%, upper standard = 5%, upper error = none (left missing), and lower error is at its default value, outputs: "No plans found!".
+
+*check 5*: lower standard = 10%, upper standard = 5%, lower error = none (left missing), and upper error is at its default value, outputs: "No plans found!".
+
