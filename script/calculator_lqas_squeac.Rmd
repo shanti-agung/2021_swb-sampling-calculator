@@ -43,6 +43,7 @@ Study type(s) this calculator would be suitable for:
 
 
 4. Is the calculator calculation correct?
+
 For each pair of sample size and decision rule that the calculator generates, its actual upper level error (type 1 error) and actual lower level error (type 2 error) are calculated correctly. For the calculation of sample sizes and decision rules, the *squeac* calculator outputs are very similar to our our calculation. Section 4 provides details of how we verified the calculator calculation.
 
 
@@ -75,7 +76,7 @@ For each pair of sample size and decision rule that the calculator generates, it
 
 ## 4. Verify the squeac calculator calculation
 
-### Verify calculation: input parameters set 1
+### 4.1 Verify calculation: input parameters set 1
 
 To check the calculation of *squeac* calculator, we use input parameters as follow: lower standard = 50%, upper standard = 80%, upper error level = 10%, and lower error level = 10%. These input parameters are similar to those in Lemeshow and Taber (1991).
 
@@ -162,7 +163,7 @@ calculator output, upper = 5%. very close.
 calculator output, lower = 19%. correct.
 
 
-### Verify calculation: input parameters set 2
+### 4.2 Verify calculation: input parameters set 2
 
 Check with different input parameters
 
@@ -221,7 +222,7 @@ calculator output: 1%. correct.
 
 calculator ouput: 19%. correct.
 
-### Input validation check
+### 4.3 Input validation check
 
 *check 1*: lower standard = none (left missing), upper standard = 10%, and other inputs are their default values, outputs: warning "You must specify a number (%) for the lower level".
 
