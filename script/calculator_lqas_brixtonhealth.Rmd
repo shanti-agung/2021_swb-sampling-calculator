@@ -2,7 +2,7 @@
 title: "Review of LQAS Sampling Plan Calculator"
 subtitle: "Brixton Health Calculator"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
-output: pdf_document
+output: word_document
 ---
 
 ```{r setup, include=FALSE}
