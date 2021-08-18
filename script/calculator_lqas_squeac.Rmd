@@ -117,6 +117,13 @@ paste0("d_star: ", ceiling(d_star))
 
 The *squeac* calculator generates outputs that start from n = 81 and d = 10. Very similar.
 
+In calculating the upper and lower error level, the *squeac* calculator seems to use the binomial approximation to the hypergeometric distribution. The binomial distribution is represented by the following formula:
+$$
+\mathrm{P}(d \le d^*) = \sum_{d=0}^{d^*} \binom{n}{d}P^d(1-P)^{n-d}
+$$
+
+where $d$ is the number of "defect", such as unvaccinated people or HIV seropositive subjects; and $d^*$ is the decision rule (decision threshold).
+
 ```{r}
 # calculate P(d<=11)
 pbinom(11, size = 83, prob = 0.2)
