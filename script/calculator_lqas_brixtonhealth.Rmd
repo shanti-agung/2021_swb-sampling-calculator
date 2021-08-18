@@ -89,7 +89,7 @@ $$
 \mathrm{P}(d \le d^*) = \sum_{d=0}^{d^*} \frac{\binom{NP_0}{d} \binom{N(1-P_0)}{n-d}}{\binom{N}{n}}
 $$
 
-where $d$ is the number of "defect", such as unvaccinated people or HIV seropositive subjects; and $d^*$ is the decision rule (decision threshold).
+where $d$, in lot sampling, is the number of “defective items” - in health survey $d$ could be the number of unvaccinated people or HIV seropositive subjects; and $d^*$ is the decision rule (decision threshold).
 
 The *brixtonhealth* calculator uses the following default specifications:
 

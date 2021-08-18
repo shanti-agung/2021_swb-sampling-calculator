@@ -122,7 +122,7 @@ $$
 \mathrm{P}(d \le d^*) = \sum_{d=0}^{d^*} \binom{n}{d}P^d(1-P)^{n-d}
 $$
 
-where $d$ is the number of "defect", such as unvaccinated people or HIV seropositive subjects; and $d^*$ is the decision rule (decision threshold).
+where $d$, in lot sampling, is the number of “defective items” - in health survey $d$ could be the number of unvaccinated people or HIV seropositive subjects; and $d^*$ is the decision rule (decision threshold).
 
 ```{r}
 # calculate P(d<=11)
