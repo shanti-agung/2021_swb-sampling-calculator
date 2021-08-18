@@ -84,6 +84,13 @@ The calculation of actual $\alpha$ error and actual $\beta$ error that the *brix
 
 **Summary:** the calculation of actual $\alpha$ and actual $\beta$ that the *brixtonhealth* calculator generates are correct and identical to the approach described in Lemeshow and Stroh (1989). Its resulting decision rule is slightly different than the decision rule that we calculated using Lemeshow and Stroh (1989) as reference. The *brixtonhealth* calculator uses hypergeometric distribution rather than normal approximation to the hypergeometric distribution.
 
+Hypergeometric distribution is represented by the following formula:
+$$
+\mathrm{P}(d \le d^*) = \sum_{d=0}^{d^*} \frac{\binom{NP_0}{d} \binom{N(1-P_0)}{n-d}}{\binom{N}{n}}
+$$
+
+where $d$ is the number of "defect", such as unvaccinated people or HIV seropositive subjects; and $d^*$ is the decision rule (decision threshold).
+
 The *brixtonhealth* calculator uses the following default specifications:
 
 * Population size, $N = 600$
