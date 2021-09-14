@@ -21,7 +21,7 @@ Several pros of the *select-statistics* calculator:
 
 * It offers guidance on how to use the calculator, such as the values of common input parameters and dealing with multiple questions. 
 
-* It includes *Alternative Scenarios* feature, where users can vary an input parameter (holding other input parameters constant) and observe changes in the calculated sample size. 
+* It includes Alternative Scenarios section, where users can vary an input parameter (holding other input parameters constant) and observe changes in the calculated sample size. 
 
 * It states the formula underlying its calculation.
 
@@ -44,7 +44,6 @@ Study type(s) this calculator would be suitable for:
 1. What are the sampling assumptions  made for the calculator? 
 * Simple random sampling without replacement.
 * The sample proportion, $p$, is assumed to be normally distributed.
-* The population size, $N$, is large and sampling fraction, $n/N$ is negligible.
 * The resulting sample size, $n$, is moderately large (i.e., $n \geq 50$) such that normal approximation to t distribution can be used for the critical value (i.e, $z_{\alpha/2}$). 
 
 
@@ -78,13 +77,158 @@ Study type(s) this calculator would be suitable for:
 
 ## 3. Limitations
 
-* Does the calculator apply to stratified samplings too or only simple random sampling?
+* Does the calculator apply to stratified sampling too or only simple random sampling? [????]
 
 * It will helpful to explicitly states that the calculator is only valid in surveys where the sampling units are classified into the property of interests. The calculator does not apply to surveys where each unit consists of elements and these elements are classified into property of interests, such as in cluster sampling (Cochran, 1977).
 
-* May not be the best option when surveying rare items -- if population proportion is expected to be small (e.g.,  $P \leq 10%$). 
+* The UX design of Alternative Scenarios section can be confusing. [????]
 
 ## 4. Verification of the Select Statistics calculator calculation
+
+The *select-statistics* explains that the formula that the calculator uses to calculate the sample size, $n$, is:
+
+$$
+n = \frac{N \times X}{(X + N - 1)}  \tag{1}
+$$
+where,
+
+$$
+X = \frac{z_{\alpha/2}^2 \times p \times (1-p)}{\text{MOE}^2}  \tag{2}
+$$
+and,
+
+* $N$ : population size
+
+* $z_{\alpha/2}$ : the critical value of the normal distribution at $\alpha/2$, where $\text{confidence level} = 1 - \alpha$
+
+* $p$ : expected sample proportion
+
+* $\text{MOE}$ : margin of error
+
+Equation (1) and (2) corresponds to equation (4.3) and (4.2) in Cochran (1977), respectively, with the exception that the *select-statistics* calculator uses normal distribution instead of t-distribution for the critical value.
+
+
+```{r}
+# create a function that calculates sample size based on formulas in equation (1) and (2)
+# default values of the function's parameters are identical to 
+# the default values of select-statistics calculator
+
+compute_n <- function(moe = 0.05, conf_level = 0.95, N = 100000, p = 0.5) {
+ # critical value
+ z <- qnorm((1-conf_level)/2, lower.tail = FALSE)
+ # calculate X
+ X <- (z^2 * p * (1-p)) / (moe^2)
+ # calculate n
+ n <-  (N * X) / (X + N - 1)
+ n <- ceiling(n)
+ return(n)
+}
+```
+
+
+### 4.1 Verify calculation: input parameters set 1
+
+To verify the calculation of the *select-statistics* calculator, we first used its default values for input parameters. Those values were: margin of error = 5%, confidence level = 95%, population size = 100,000, and expected sample proportion = 50%. 
+
+```{r}
+# set input parameters: set 1
+moe <- 0.05           # margin of error
+conf_level <- 0.95    # confidence level
+N <- 100000           # population size
+p <- 0.5              # expected sample proportion
+
+```
+
+```{r}
+# calculate recommended sample size
+recommended_n <- compute_n()
+recommended_n
+```
+
+The *select-statistics* output was $n$ = 383. Our verification resulted in $n$ = `r recommended_n`. The calculator correctly calculated $n$.
+
+
+### 4.2 Verify calculation: input parameters set 2
+
+```{r}
+# set input parameters: set 2
+moe <- 0.10           # margin of error
+conf_level <- 0.90    # confidence level
+N <- 150000           # population size
+p <- 0.6              # expected sample proportion
+```
+
+```{r}
+# calculate recommended sample size
+recommended_n <- compute_n(moe = moe, conf_level = conf_level, N = N, p = p)
+recommended_n
+```
+
+The *select-statistics* output was $n$ = 65. Our verification resulted in $n$ = `r recommended_n`. The calculator correctly calculated $n$.
+
+
+### 4.3 Verify calculation: alternative scenario - margin of error
+
+To verify the calculation of alternative scenario on margin of error, we used its default values for input parameters in the Calculator section, and altered the margin of error to 3% in the Alternative Scenarios section (other input parameters are identical to their values in the Calculator section). Those values were: margin of error = 3%, confidence level = 95%, population size = 100,000, and expected sample proportion = 50%.
+
+```{r}
+# set the margin of error
+moe <- 0.03
+  
+# calculate recommended sample size
+recommended_n <- compute_n(moe = moe)
+recommended_n
+```
+
+The *select-statistics* output was $n$ = 1056. Our verification resulted in $n$ = `r recommended_n`. The calculator correctly calculated $n$.
+
+### 4.4 Verify calculation: alternative scenario - confidence level
+
+To verify the calculation of alternative scenario on confidence level, we used its default values for input parameters in the Calculator section, and altered the confidence level to 97.5% in the Alternative Scenarios section (other input parameters are identical to their values in the Calculator section). Those values were: margin of error = 5%, confidence level = 97.5%, population size = 100,000, and expected sample proportion = 50%.
+
+```{r}
+# set the confidence level
+conf_level <- 0.975
+  
+# calculate recommended sample size
+recommended_n <- compute_n(conf_level = conf_level)
+recommended_n
+```
+
+The *select-statistics* output was $n$ = 500. Our verification resulted in $n$ = `r recommended_n`. The calculator correctly calculated $n$.
+
+### 4.5 Verify calculation: alternative scenario - population size
+
+To verify the calculation of alternative scenario on population size, we used its default values for input parameters in the Calculator section, and altered the population size to 5,000 in the Alternative Scenarios section (other input parameters are identical to their values in the Calculator section). Those values were: margin of error = 5%, confidence level = 95%, population size = 5,000, and expected sample proportion = 50%.
+
+```{r}
+# set the population size
+N <- 5000
+
+# calculate recommended sample size
+recommended_n <- compute_n(N = N)
+recommended_n
+```
+
+The *select-statistics* output was $n$ = 357. Our verification resulted in $n$ = `r recommended_n`. The calculator correctly calculated $n$.
+
+### 4.6 Verify calculation: alternative scenario - sample proportion
+
+To verify the calculation of alternative scenario on the expected sample proportion, we used its default values for input parameters in the Calculator section, and altered the expected sample proportion to 2% in the Alternative Scenarios section (other input parameters are identical to their values in the Calculator section). Those values were: margin of error = 5%, confidence level = 95%, population size = 100,000, and expected sample proportion = 2%.
+
+```{r}
+# set the expected sample proportion
+p <- 0.02
+
+# calculate recommended sample size
+recommended_n <- compute_n(p = p)
+recommended_n
+```
+
+The *select-statistics* output was $n$ = 31. Our verification resulted in $n$ = `r recommended_n`. The calculator correctly calculated $n$.
+
+### 4.7 Verify calculation: alternative scenario - sample size
+
 
 
 ## 5. References
