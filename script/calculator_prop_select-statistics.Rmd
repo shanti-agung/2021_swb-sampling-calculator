@@ -88,12 +88,12 @@ The *select-statistics* calculations are correct. Section 4 provides details of 
 The *select-statistics* explains that the formula that the calculator uses to calculate the sample size, $n$, is:
 
 $$
-n = \frac{N \times X}{(X + N - 1)}  \tag{1}
+n = \frac{N \times X}{(X + N - 1)} \tag{1}
 $$
 where,
 
 $$
-X = \frac{z_{\alpha/2}^2 \times p \times (1-p)}{\text{MOE}^2}  \tag{2}
+X = \frac{z_{\alpha/2}^2 \times p \times (1-p)}{\text{MOE}^2} \tag{2}
 $$
 and,
 
@@ -231,7 +231,7 @@ The *select-statistics* output was $n$ = 31. Our verification resulted in $n$ = 
 
 Solving for margin of error in equation (1), we get:
 $$
-\text{MOE} = \sqrt{\frac{z_{\alpha/2}^2 \times p \times (1-p) \times (N-n)}{n \times (N-1)}}  \tag{3}
+\text{MOE} = \sqrt{\frac{z_{\alpha/2}^2 \times p \times (1-p) \times (N-n)}{n \times (N-1)}} \tag{3}
 $$
 
 ```{r}
