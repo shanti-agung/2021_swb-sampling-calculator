@@ -15,17 +15,17 @@ Source link: [Select Statistics's sample size calculator](https://select-statist
 
 The *select-statistics* calculator calculates sample sizes to estimate population proportions. Input parameters that users need to supply are margin of error, confidence level, population size, and the expected sample proportion. 
 
-Several pros of the *select-statistics* calculator: 
+Positive features of the *select-statistics* calculator include: 
 
-* The calculator provides clear scope of usage of the calculator. In its opening section, *select-statistics* explicitly stated that the calculator only applicable for questions that have two responses.
+* The calculator provides a clear scope of usage of the calculator. It explicitly states that the calculator is only applicable for questions that have two valid answers.
 
-* It offers guidance on how to use the calculator, such as the values of common input parameters and dealing with multiple questions. 
+* It offers guidance on how to use the calculator, such as values of common input parameters and dealing with multiple questions. 
 
-* It includes Alternative Scenarios section, where users can vary an input parameter (holding other input parameters constant) and observe changes in the calculated sample size. 
+* It includes the Alternative Scenarios section, where users can vary an input parameter (holding other input parameters constant) and observe changes in the calculated sample size. 
 
 * It states the formula underlying its calculation.
 
-* For users who are less familiar with statistics, the calculator provides a worked example and brief definitions of input parameters and the calculator's outputs.
+* For users less familiar with statistics, the calculator provides a worked example and brief definitions of input parameters and the calculator's outputs.
 
 
 Study type(s) this calculator would be suitable for:
@@ -52,36 +52,36 @@ Study type(s) this calculator would be suitable for:
 * Other: margin of error, confidence level.
 
 
-3. If it includes continuous variables how do they determine variance of estimates since a distribution needs to be known or assumptions made about the distribution?
+3. If it includes continuous variables, how do they determine variance of estimates since a distribution needs to be known or assumptions made about the distribution?
 * Not applicable because the calculator does not include continuous variables. 
 
 
 4. Is the calculator calculation correct?
 The *select-statistics* calculations are correct. Section 4 provides details of how we verified the calculator calculation using R.
 
-5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
-* No mention of cluster.
+5. If clustering of sample units, is a design effect suggested? What about for double sampling, for stratification?
+* No mention of cluster sampling.
 * No mention of design effect.
 
 
 6. Is probability proportional to size, stratification, double sampling?
-* No mentioned of probability proportional to size, stratification, or double sampling.
+* No mention of probability proportional to size, stratification, or double sampling.
 
 7. Accuracy of continuous variable estimate as well as that of proportion?
 * The calculator only deals with proportion.
 
 
-8. How does calculator deal with effect of non-response bias on accuracy?
+8. How does the calculator deal with the effect of non-response bias on accuracy?
 * No mention of non-response.
 
 
 ## 3. Limitations
 
-* Does the calculator apply to stratified sampling too or only simple random sampling? [????]
+* It does not cover sample size calculation for surveys that involve stratified sampling.
 
-* It will helpful to explicitly states that the calculator is only valid in surveys where the sampling units are classified into the property of interests. The calculator does not apply to surveys where each unit consists of elements and these elements are classified into property of interests, such as in cluster sampling (Cochran, 1977).
+* It is only valid in surveys where the sampling units are classified into the property of interests. The calculator does not apply to surveys where each unit consists of elements, and these elements are classified into the property of interests, such as in cluster sampling (Cochran, 1977).
 
-* The current layout of Alternative Scenarios section can be confusing. It may give an incorrect impression that the values in the third row until the last row are related to the values of sample size as noted in the first row. The values in the third row until the last row are related to the input parameters in the Calculator section instead.
+* The current layout of the Alternative Scenarios section can be confusing. It may give an incorrect impression that the values in the third row until the last row are related to the values of sample size as noted in the first row. The values in the third row until the last row are related to the input parameters in the Calculator section instead.
 
 ## 4. Verification of the Select Statistics calculator calculation
 
@@ -105,11 +105,11 @@ and,
 
 * $\text{MOE}$ : margin of error
 
-Equation (1) and (2) corresponds to equation (4.3) and (4.2) in Cochran (1977), respectively, with the exception that the *select-statistics* calculator uses normal distribution instead of t-distribution for the critical value.
+Equation (1) and (2) corresponds to equations (4.3) and (4.2) in Cochran (1977), respectively, with the exception that the *select-statistics* calculator uses normal distribution instead of t-distribution for the critical value.
 
 
 ```{r}
-# create a function that calculates sample size based on formulas in equation (1) and (2)
+# create a function that calculates sample size based on formulas in equations (1) and (2)
 # default values of the function's parameters are identical to 
 # the default values of select-statistics calculator
 
