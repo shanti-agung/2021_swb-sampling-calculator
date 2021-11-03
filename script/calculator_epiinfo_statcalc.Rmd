@@ -1,0 +1,225 @@
+---
+title: "Review of EPI Info"
+subtitle: "StatCalc Calculator"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Source link: [Download EPI Info software](https://www.cdc.gov/epiinfo/support/downloads.html)
+
+
+## 1. Summary
+
+The *StatCalc* offers analytic computation for pre and post data collection. It comprises of eight modules.Three modules serve as sample size calculators: *Population Survey*, *Cohort or Cross-Sectional*, and *Unmatched Case-Control*. These three modules calculate sample size for proportion.
+
+The input parameters of modules for calculating sample sizes:
+
+* *Population Survey* input parameters: population size, expected frequency, acceptable margin of error, design effect, and number of clusters. 
+
+* *Cross or Cross-Sectional* input parameters:
+
+* *Unmatched Case-Control* input parameters: 
+
+
+Positive aspects of *StatCalc* includes:
+* The output lists sample sizes for seven most popular confidence level: 80%, 90%, 95%, 97%, 99%, 99.9%, and 99.99%
+
+
+**Study type(s) this calculator would be suitable for:**
+
+* Point in time surveys to estimate a proportion
+
+* Humanitarian surveys
+
+* Comparative surveys
+
+
+## 2. Review Checklist
+
+1. What are the sampling assumptions  made for the calculator? 
+* Simple random sampling without replacement
+* If systematic sampling, it must be representative. That is, the population is in random order -- the listing of population units is not in some periodic or cyclical order.
+* If elements are clustered, clusters are of equal sizes
+* Single-stage cluster sampling?
+
+
+2. What measure of accuracy is used for sample size calculation? 
+*  Confidence interval
+* No mention of coefficient of variation
+
+
+3. If it includes continuous variables how do they determine variance of estimates since a distribution needs to be known or assumptions made about the distribution?
+* Not applicable because the calculator does not include continuous variables. 
+
+
+4. Is the calculator calculation correct?
+
+*Population Survey* module: for simple random sampling, the calculation of sample size to estimate population proportion is correct. For cluster sampling, we reconstructed the formula that the *Population Survey* module uses. The formula has several limitations which we described in Section 3. Section 4 provides details of how we verified the calculator calculation using R.
+
+**For each pair of sample size and decision rule that the calculator generates, its actual upper level error (type 1 error) and actual lower level error (type 2 error) are calculated correctly. For the calculation of sample sizes and decision rules, the *squeac* calculator outputs are very similar to our our calculation. Section 4 provides details of how we verified the calculator calculation.**
+
+
+5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
+* Yes, design effect is suggested for clustering of sample units
+* The calculator only performs sampling plan calculation for single sampling.
+
+
+6. Is probability proportional to size, stratification, double sampling?
+* No mention of probability proportional to size, stratification, or double sampling.
+
+
+7. Accuracy of continuous variable estimate as well as that of proportion?
+* The calculator only deals with proportion.
+
+
+8. How does calculator deal with effect of non-response bias on accuracy?
+* No mention of non-response.
+
+## 3. Limitations
+
+Limitations of *Population Survey* module:
+
+* It does not cover sample size calculation for surveys that involve stratified sampling.
+
+* Measure of accuracy is limited to the eight default confidence levels, which users cannot customize.
+
+* The labeling of input parameter "Clusters" and "Cluster Size" can be confusing for users. For example, the *Population Survey*'s window of  *StatCalc* provides an instruction: "For simple random sampling, leave design effect and clusters equal to 1". To obtain the resulting sample size, users must look at the values under the output parameter "Cluster Size". That is, the output of "Cluster Size" is the sample size calculated by the *Population Survey* module. 
+
+* The labeling of output parameter "Cluster Size" may be questionable. Two cases are provided below.
+
+a. If users are required to enter a value of 1 for input parameter "Clusters", then the "Cluster Size" should equal to the value of input parameter "Population size". But, the value of "Cluster Size" is the resulting sample size instead. 
+
+b. Another case pertains to the values of "Cluster Size" when input parameter "Clusters" is larger than 1. The *Population Survey* guideline defines input parameter "Clusters" as follow: "This input designates the number of clusters in the population survey." Following this definition and assuming that clusters are of equal sizes, the value of "Cluster Size" should equal to the value of "Population size" divided by the value of "Clusters". However, the value of "Cluster Size" does not equal to the value of "Population size" divided by the value of "Clusters". If elements are clustered, "Cluster Size" seems to refer to the number of elements to be sampled from each cluster (i.e., the number of secondary sampling units to be sampled).
+
+## 4. Verification of the Select Statistics calculator calculation
+
+### 4.1 Population Survey
+
+**Simple Random Sampling**
+
+Formula to calculate sample size for estimating population proportion from simple random sampling is:
+
+$$
+n = \frac{N \times X}{(X + N - 1)}
+$$
+
+where,
+
+$$
+X = \frac{z_{\alpha/2}^2 \times p \times (1-p)}{\text{MOE}^2}
+$$
+and,
+
+* $N$ : population size
+
+* $z_{\alpha/2}$ : the critical value of the normal distribution at $\alpha/2$, where $\text{confidence level} = 1 - \alpha$
+
+* $p$ : expected sample proportion
+
+* $\text{MOE}$ : acceptable margin of error
+
+The two equations above corresponds to equations (4.3) and (4.2) in Cochran (1977), respectively, with the exception that the equations listed in this review document use normal distribution instead of t-distribution for the critical value.
+
+```{r}
+# create a function that calculates sample size based for SRS
+compute_n_srs <- function(moe = 0.05, conf_level = 0.95, N = 100000, p = 0.5) {
+ # critical value
+ z <- qnorm((1-conf_level)/2, lower.tail = FALSE)
+ # calculate X
+ X <- (z^2 * p * (1-p)) / (moe^2)
+ # calculate n
+ n <-  (N * X) / (X + N - 1)
+ n <- ceiling(n)
+ return(n)
+}
+```
+
+
+```{r}
+# set input parameters: set 1
+moe <- 0.05           # margin of error
+conf_level <- 0.90    # confidence level
+N <- 100000           # population size
+p <- 0.5              # expected sample proportion
+
+```
+
+```{r}
+# calculate recommended sample size
+recommended_n <- compute_n_srs(moe = moe, conf_level = conf_level, N = N, p = p)
+recommended_n
+```
+
+Given the input parameters of set 1, the *Population Survey* output for "Cluster Size" was $n$ = 270. Our verification resulted in $n$ = `r recommended_n`. The calculator correctly calculated $n$.
+
+**Cluster Sampling**
+
+To calculate the output parameter "Cluster Size", the *Population Survey* seems to use the following formula:
+$$
+\text{Cluster Size} = \frac{n_{srs} \times deff}{\text{Clusters}}
+$$
+
+where:
+* $n_{srs}$ : sample size for simple random sampling using formulas in the earlier subsection
+
+* $deff$ : design effect
+
+* Clusters : the input parameter "Clusters". Recall that *StatCalc* user guide defines "Clusters" as "This input designates the number of clusters in the population survey".
+
+The numerator in the equation corresponds to total elements that would be needed, an approach introduced by Cornfield (1951) and noted in Cochran (1977) as well as in Lohr (2010).
+
+With regard to the formula for "Total Sample", the user guide explains that "Total Sample" is "Cluster Size" multiplied by "Clusters":
+
+
+$$
+\text{Total Sample} = \text{Cluster Size} \times \text{Clusters}
+$$
+
+```{r}
+# create a function to calculate cluster size
+compute_cluster_size <- function(moe = 0.05, conf_level = 0.95, N = 100000, p = 0.5, deff = 1, clusters = 1) {
+  n_srs <- compute_n_srs(moe = moe, conf_level = conf_level, N = N, p = p)
+  cluster_size <- ceiling((n_srs * deff) / clusters)
+  total_sample <- cluster_size * clusters
+  print(paste0("Cluster Size : ", as.character(cluster_size)))
+  print(paste0("Total Sample : ", as.character(total_sample)))
+}
+```
+
+```{r}
+# set input parameters: set 2
+moe <- 0.05           # margin of error
+conf_level <- 0.95    # confidence level
+N <- 100000           # population size
+p <- 0.5              # expected sample proportion
+deff <- 1.5           # design effect
+clusters <- 2
+```
+
+
+```{r}
+# compute cluster size using input parameters set 2
+compute_cluster_size(moe = moe, conf_level = conf_level, N = N, p = p, deff = deff, clusters = clusters)
+```
+
+Given the input parameters of set 2, the *Population Survey* output for "Cluster Size" was 288 and "Total Sample" was 576.
+
+```{r}
+# set input parameters: set 3
+moe <- 0.05           # margin of error
+conf_level <- 0.90    # confidence level
+N <- 100000           # population size
+p <- 0.5              # expected sample proportion
+deff <- 1.5           # design effect
+clusters <- 3
+```
+
+```{r}
+# compute cluster size using input parameters set 3
+compute_cluster_size(moe = moe, conf_level = conf_level, N = N, p = p, deff = deff, clusters = clusters)
+```
+
+Given the input parameters of set 2, the *Population Survey* output for "Cluster Size" was 135 and "Total Sample" was 405.
