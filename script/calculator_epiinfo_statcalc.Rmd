@@ -40,10 +40,10 @@ Positive aspects of *StatCalc* includes:
 
 ## 2. Review Checklist
 
-1. What are the sampling assumptions  made for the calculator? 
+1. What are the sampling assumptions made for the calculator? 
 The *Population Survey* module:
 * Simple random sampling without replacement
-* If systematic sampling, it must be representative. That is, the population is in random order -- the listing of population units is not in some periodic or cyclical order.
+* If systematic sampling, it must be representative. The population is in random order -- the listing of population units is not in some periodic or cyclical order.
 * If elements are clustered, single-stage cluster sampling with clusters are of equal sizes
 
 
@@ -52,7 +52,7 @@ The *Population Survey* module:
 * The *Cohort or Cross-Section* module: Confidence level, power
 
 
-3. If it includes continuous variables how do they determine variance of estimates since a distribution needs to be known or assumptions made about the distribution?
+3. If it includes continuous variables, how do they determine the variance of estimates since a distribution needs to be known or assumptions made about the distribution?
 * Not applicable because the calculator does not include continuous variables. 
 
 
@@ -63,7 +63,7 @@ The *Population Survey* module: for simple random sampling, the calculation of s
 
 5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
 The *Population Survey* module:
-* Yes, design effect is suggested for clustering of sample units
+* Yes, a design effect is suggested for clustering of sample units
 * The calculator only performs sampling plan calculation for single sampling.
 
 The *Cohort or Cross-Sectional* module: not applicable
@@ -79,7 +79,7 @@ The *Unmatched Case-Control* module: not applicable
 * The calculator only deals with proportion.
 
 
-8. How does calculator deal with effect of non-response bias on accuracy?
+8. How does the calculator deal with the effect of non-response bias on accuracy?
 * No mention of non-response.
 
 ## 3. Limitations
@@ -92,9 +92,9 @@ The *Population Survey* module:
 
 * It does not cover sample size calculation for surveys that involve stratified sampling.
 
-* The labeling of input parameter "Clusters" and "Cluster Size" can be confusing for users. For example, the *Population Survey*'s window of  *StatCalc* provides an instruction: "For simple random sampling, leave design effect and clusters equal to 1". To obtain the resulting sample size, users must look at the values under the output parameter "Cluster Size". That is, although labeled as "Cluster Size", its value is actually the sample size calculated by the *Population Survey* module. Additionally in this simple random sampling case, if users are required to enter a value of 1 for input parameter "Clusters", then the "Cluster Size" should equal to the value of input parameter "Population size". But again, the value of "Cluster Size" is the resulting sample size instead. 
+* The labeling of input parameters "Clusters" and "Cluster Size" can confuse users. For example, the *Population Survey*'s window of  *StatCalc* provides an instruction: "For simple random sampling, leave design effect and clusters equal to 1". Users must look at the values under the output parameter "Cluster Size" to obtain the resulting sample size. That is, although labeled as "Cluster Size", its value is the sample size calculated by the *Population Survey* module. Additionally, in this simple random sampling case, if users are required to enter a value of 1 for the input parameter "Clusters", then the "Cluster Size" should equal to the value of the input parameter "Population size". But again, the value of "Cluster Size" is the resulting sample size instead. 
 
-* The definition of input parameter "Clusters" could be misunderstood. The *Population Survey* guideline defines input parameter "Clusters" as follow: "This input designates the number of clusters in the population survey." One possible interpretation of this definition is that "Clusters" is the number of clusters in the population. Another interpretation is that "Clusters" refers to the number of clusters in the sample. Following former definition and assuming that clusters are of equal sizes, the value of "Cluster Size" should equal to the value of "Population size" divided by the value of "Clusters". However, the value of "Cluster Size" does not equal to the value of "Population size" divided by the value of "Clusters". Instead, "Cluster Size" equals to "Total sample" divided by "Clusters". Thus, "Clusters" refers to the number of primary sampling units (psus) in the sample.
+* The definition of the input parameter "Clusters" could be misunderstood. The *Population Survey* guideline defines input parameter "Clusters" as follows: "This input designates the number of clusters in the population survey." One possible interpretation of this definition is that the parameter "Clusters" is the number of clusters in the population. Another interpretation is that "Clusters" refers to the number of clusters in the sample. Following the former definition and assuming that clusters are of equal sizes, the value of "Cluster Size" should equal to the value of "Population size" divided by the value of "Clusters". However, the value of "Cluster Size" does not equal to the value of "Population size" divided by the value of "Clusters". Instead, "Cluster Size" is equal to "Total sample" divided by "Clusters". Thus, "Clusters" refers to the number of primary sampling units (psus) in the sample.
 
 
 ## 4. Verification of the Select Statistics calculator calculation
@@ -124,7 +124,7 @@ and,
 
 * $\text{MOE}$ : acceptable margin of error
 
-The two equations above corresponds to equations (4.3) and (4.2) in Cochran (1977), respectively, with the exception that the equations listed in this review document use normal distribution instead of t-distribution for the critical value.
+The two equations above correspond to equations (4.3) and (4.2) in Cochran (1977), respectively, with the exception that the equations listed in this review document use normal distribution instead of t-distribution for the critical value.
 
 ```{r}
 # create a function that calculates sample size based for SRS
@@ -313,8 +313,6 @@ compute_n_kelsey_or <- function(confidence_level = 0.95, power = 0.8, OR, r = 1,
   n1 <- ((z_alpha_2tails + z_power)^2 * p_bar * (1 - p_bar) * (r + 1) ) / (r * (p1 - p2)^2)
   n1 <- ceiling(n1)
   n2 <- r * n1
-  #print(paste0("z_alpha_2_tails : ", as.character(z_alpha_2tails)))
-  #print(paste0("z_power : ", as.character(z_power)))
   print(paste0("proportion outcome in the exposed group (p1) : ", as.character(round(p1,2))))
   print(paste0("sample size of exposed group (n1) : ", as.character(n1)))
   print(paste0("sample size of unexposed group (n2) : ", as.character(n2)))
