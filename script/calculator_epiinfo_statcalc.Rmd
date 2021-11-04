@@ -57,7 +57,7 @@ Positive aspects of *StatCalc* includes:
 
 4. Is the calculator calculation correct?
 
-*Population Survey* module: for simple random sampling, the calculation of sample size to estimate population proportion is correct. For cluster sampling, we reconstructed the formula that the *Population Survey* module uses. The formula has several limitations which we described in Section 3. Section 4 provides details of how we verified the calculator calculation using R.
+*Population Survey* module: for simple random sampling, the calculation of sample size to estimate population proportion is correct. For cluster sampling, we reconstructed the formula that the *Population Survey* module uses. Section 4 provides details of how we verified the calculator calculation using R.
 
 **For each pair of sample size and decision rule that the calculator generates, its actual upper level error (type 1 error) and actual lower level error (type 2 error) are calculated correctly. For the calculation of sample sizes and decision rules, the *squeac* calculator outputs are very similar to our our calculation. Section 4 provides details of how we verified the calculator calculation.**
 
@@ -86,13 +86,9 @@ Limitations of *Population Survey* module:
 
 * Measure of accuracy is limited to the eight default confidence levels, which users cannot customize.
 
-* The labeling of input parameter "Clusters" and "Cluster Size" can be confusing for users. Three cases are provided below. 
+* The labeling of input parameter "Clusters" and "Cluster Size" can be confusing for users. For example, the *Population Survey*'s window of  *StatCalc* provides an instruction: "For simple random sampling, leave design effect and clusters equal to 1". To obtain the resulting sample size, users must look at the values under the output parameter "Cluster Size". That is, although labeled as "Cluster Size", its value is actually the sample size calculated by the *Population Survey* module. Additionally in this simple random sampling case, if users are required to enter a value of 1 for input parameter "Clusters", then the "Cluster Size" should equal to the value of input parameter "Population size". But again, the value of "Cluster Size" is the resulting sample size instead. 
 
-a. The *Population Survey*'s window of  *StatCalc* provides an instruction: "For simple random sampling, leave design effect and clusters equal to 1". To obtain the resulting sample size, users must look at the values under the output parameter "Cluster Size". That is, although labeled as "Cluster Size", its value is actually the sample size calculated by the *Population Survey* module. 
-
-b. If users are required to enter a value of 1 for input parameter "Clusters", then the "Cluster Size" should equal to the value of input parameter "Population size". But, the value of "Cluster Size" is the resulting sample size instead. 
-
-c. The definition of input parameter "Clusters" could be misunderstood. The *Population Survey* guideline defines input parameter "Clusters" as follow: "This input designates the number of clusters in the population survey." One possible interpretation of this definition is that "Clusters" is the number of clusters in the population. Another interpretation is that "Clusters" refers to the number of clusters in the sample. Following former definition and assuming that clusters are of equal sizes, the value of "Cluster Size" should equal to the value of "Population size" divided by the value of "Clusters". However, the value of "Cluster Size" does not equal to the value of "Population size" divided by the value of "Clusters". Instead, "Cluster Size" equals to "Total sample" divided by "Clusters". Thus, "Clusters" refers to the number of primary sampling units (psus) in the sample.
+* The definition of input parameter "Clusters" could be misunderstood. The *Population Survey* guideline defines input parameter "Clusters" as follow: "This input designates the number of clusters in the population survey." One possible interpretation of this definition is that "Clusters" is the number of clusters in the population. Another interpretation is that "Clusters" refers to the number of clusters in the sample. Following former definition and assuming that clusters are of equal sizes, the value of "Cluster Size" should equal to the value of "Population size" divided by the value of "Clusters". However, the value of "Cluster Size" does not equal to the value of "Population size" divided by the value of "Clusters". Instead, "Cluster Size" equals to "Total sample" divided by "Clusters". Thus, "Clusters" refers to the number of primary sampling units (psus) in the sample.
 
 
 ## 4. Verification of the Select Statistics calculator calculation
@@ -168,7 +164,7 @@ where:
 
 * $deff$ : design effect
 
-* Clusters : the input parameter "Clusters". Recall that *StatCalc* user guide defines "Clusters" as "This input designates the number of clusters in the population survey".
+* Clusters : the input parameter "Clusters". The *StatCalc* user guide explanation of "Clusters" is: "This input designates the number of clusters in the population survey". It is likely to mean the number of primary sampling units (psus) in the sample.
 
 The numerator in the equation corresponds to total elements that would be needed, an approach introduced by Cornfield (1951) and noted in Cochran (1977) as well as in Lohr (2010).
 
