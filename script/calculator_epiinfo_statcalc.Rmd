@@ -19,13 +19,12 @@ The input parameters of modules for calculating sample sizes:
 
 * *Population Survey* input parameters: population size, expected frequency, acceptable margin of error, design effect, and number of clusters. 
 
-* *Cross or Cross-Sectional* input parameters:
+* *Cohort or Cross-Sectional* input parameters:two-sided confidence level, power, ratio of unexposed to exposed, percent outcome in unexposed group, and one of the three remaining input. These three inputs are: risk ratio, odd ratio, and percent outcome in exposed group. 
 
 * *Unmatched Case-Control* input parameters: 
 
-
 Positive aspects of *StatCalc* includes:
-* The output lists sample sizes for seven most popular confidence level: 80%, 90%, 95%, 97%, 99%, 99.9%, and 99.99%
+* The output lists sample sizes for most popular confidence levels. Seven options in the *Population Survey* module, six options in the *Cohort or Cross-Sectional* module, 
 
 
 **Study type(s) this calculator would be suitable for:**
@@ -40,6 +39,7 @@ Positive aspects of *StatCalc* includes:
 ## 2. Review Checklist
 
 1. What are the sampling assumptions  made for the calculator? 
+The *Population Survey* module:
 * Simple random sampling without replacement
 * If systematic sampling, it must be representative. That is, the population is in random order -- the listing of population units is not in some periodic or cyclical order.
 * If elements are clustered, clusters are of equal sizes
@@ -47,8 +47,8 @@ Positive aspects of *StatCalc* includes:
 
 
 2. What measure of accuracy is used for sample size calculation? 
-*  Confidence interval
-* No mention of coefficient of variation
+* The *Population Survey* module: Confidence interval, no mention of coefficient of variation
+* The *Cohort or Cross-Section* module: Confidence level, power
 
 
 3. If it includes continuous variables how do they determine variance of estimates since a distribution needs to be known or assumptions made about the distribution?
@@ -63,8 +63,11 @@ Positive aspects of *StatCalc* includes:
 
 
 5. If clustering of sample units, is a design effect suggested? What about for double sampling for stratification?
+The *Population Survey* module:
 * Yes, design effect is suggested for clustering of sample units
 * The calculator only performs sampling plan calculation for single sampling.
+
+The *Cohort or Cross-Sectional* module: not applicable
 
 
 6. Is probability proportional to size, stratification, double sampling?
@@ -220,3 +223,113 @@ compute_cluster_size(moe = moe, conf_level = conf_level, N = N, p = p, deff = de
 ```
 
 Given the input parameters of set 2, the *Population Survey* output for "Cluster Size" was 135 and "Total Sample" was 405.
+
+### 4.2 Unmatched Cohort and Cross Sectional
+
+Formulas to calculate sample sizes as described in Kelsey et al. (1996) cf. Sullivan and Soe (2007):
+
+$$
+n_1 = \frac{(z_{\alpha/2} + z_{1-\beta})^2 \overline{p} \overline{q}(r+1)}{r(p_1 -1 p_2)^2}
+$$
+and
+
+$$
+n_2 = rn_1
+$$
+where:
+
+* $n_1$ : number of exposed
+
+* $n_2$ : number of unexposed
+
+* $z_{\alpha/2}$ : standard normal deviate for two-tailed test based on alpha level (1 - confidence level)
+
+* $z_{\beta}$ : standard normal deviate for one-tailed test based on beta level (1 - power)
+
+* $r$ : ratio of exposed to unexposed
+
+* $p_1$ : proportion of exposed with disease
+
+* $p_2$ : proportion of unexposed with disease
+
+* $\overline{p} = \frac{p_1 + r p_2}{r+ 1}$
+
+* $\overline{q} = 1 - \overline{p}$
+
+Formulas for sample sizes without the correction factor as described in Fleiss (1981) cf. Sullivan and Soe (2007):
+
+$$
+n_1 = \frac{\left[  z_{\alpha/2} \sqrt{(r+1)\overline{p}\overline{q}} + z_{1-\beta} \sqrt{rp_1q_1 + p_2q_2}   \right]^2}{r(p_1 - p_2)^2}
+$$
+and
+
+$$
+n_2 = rn_1
+$$
+
+Formulas for sample sizes with the correction factor as described in Fleiss (1981) cf. Sullivan and Soe (2007):
+
+$$
+n_{1cc} = \frac{n_1}{4} \left[ 1 + \sqrt{1 + \frac{2(r+1)}{n_1r|p_2 - p_1|}} \right]
+$$
+
+and
+
+$$
+n_{2cc} = rn_{1cc}
+$$
+Formula for an odds ratio when the input provided is proportion of exposed:
+$$
+OR = \frac{p_2(1-p_1)}{p_1(1 - p_2)}
+$$
+
+
+Formula for proportion of exposed when the input provided is an odds ratio:
+$$
+p_1 = \frac{p_2 OR}{1 + p_2 (OR -1)}
+$$
+
+Formula for proportion of exposed when the input provided is a risk ratio (RR):
+
+$$
+p_1 = p_2 RR
+$$
+
+```{r}
+# create function to calculate sample sizes using Kelsey et. al (1996)
+# input provided : an odds ratio
+
+compute_n_kelsey_or <- function(confidence_level = 0.95, power = 0.8, OR, r = 1, p2) {
+  alpha <- 1 - confidence_level
+  z_alpha_2tails <- qnorm(alpha/2, lower.tail = FALSE)
+  z_power <- qnorm(power, lower.tail = TRUE)
+  p1 <- (p2 * OR)/(1 + p2*(OR - 1))
+  p_bar <- (p1 + r*p2) / (r + 1)
+  n1 <- ((z_alpha_2tails + z_power)^2 * p_bar * (1 - p_bar) * (r + 1) ) / (r * (p1 - p2)^2)
+  n1 <- ceiling(n1)
+  n2 <- r * n1
+  #print(paste0("z_alpha_2_tails : ", as.character(z_alpha_2tails)))
+  #print(paste0("z_power : ", as.character(z_power)))
+  print(paste0("proportion outcome in the exposed group (p1) : ", as.character(round(p1,2))))
+  print(paste0("sample size of exposed group (n1) : ", as.character(n1)))
+  print(paste0("sample size of unexposed group (n2) : ", as.character(n2)))
+}
+```
+
+```{r}
+# set input parameters: set 4
+confidence_level <- 0.95
+power <- 0.8
+r <- 1
+p2 <- 0.075
+OR <- 2
+```
+
+```{r}
+# calculate n1 using input parameters set 4
+compute_n_kelsey_or(confidence_level = confidence_level, power = power, OR = OR, r = r, p2 = p2)
+```
+
+Given identical input parameters as in set 4, the *Cohort or Cross-Sectional* module also generated $p_1$ = 14%, $n_1$ = 361, and $n_2$ = 361.
+
+
