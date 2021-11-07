@@ -40,7 +40,8 @@ Positive aspects of *StatCalc* includes:
 
 ## 2. Review Checklist
 
-1. What are the sampling assumptions made for the calculator? 
+1. What are the sampling assumptions made for the calculator?
+All modules: Sampling without replacement.
 The *Population Survey* module:
 * Simple random sampling without replacement
 * If systematic sampling, it must be representative. The population is in random order -- the listing of population units is not in some periodic or cyclical order.
@@ -50,6 +51,7 @@ The *Population Survey* module:
 2. What measure of accuracy is used for sample size calculation? 
 * The *Population Survey* module: Confidence interval, no mention of coefficient of variation
 * The *Cohort or Cross-Section* module: Confidence level, power
+* The *Unmatched Case-Control* module: Confidence level, power
 
 
 3. If it includes continuous variables, how do they determine the variance of estimates since a distribution needs to be known or assumptions made about the distribution?
